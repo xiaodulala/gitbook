@@ -1,2 +1,2 @@
 # Introduction
-![](../img/05.jpeg)
+![](../img/golang/05.jpeg)
