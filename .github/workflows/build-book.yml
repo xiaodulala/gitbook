@@ -1,3 +1,11 @@
+name: Build and Publish My GitBook
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
 jobs:
   build:
     name: Build Gitbook
@@ -13,3 +21,5 @@ jobs:
           # specify either github_token or personal_token
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # personal_token: ${{ secrets.PERSONAL_TOKEN }}
+
+# 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
