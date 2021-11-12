@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MY_SECRET   : ${{secrets.GH_ACCESS_TOKEN}}
-      USER_NAME   : xiaodulala
+      USER_NAME   : duyong
       USER_EMAIL  : tyduyong@126.com
       BOOK_DIR    : ./
 
