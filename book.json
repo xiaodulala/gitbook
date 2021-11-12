@@ -1,0 +1,60 @@
+{
+    "author": "DuYong",
+    "title": "DuYong Gitbook",
+    "description": "dyong's gitbook",
+    "generator": "site",
+    "structure": {
+        "readme": "README.md",
+        "summary": "SUMMARY.md",
+        "glossary": "GLOSSARY.md"
+    },
+    "variables": {},
+    "links": {
+        "sidebar": {
+            "Github": "https://github.com/xiaodulala"
+        }
+    },
+    "styles": {
+        "website": "styles/website.css",
+        "ebook": "styles/ebook.css",
+        "pdf": "styles/pdf.css",
+        "mobi": "styles/mobi.css",
+        "epub": "styles/epub.css"
+    },
+    "pdf": {
+        "pageNumbers": true,
+        "fontFamily": "Arial",
+        "fontSize": 12,
+        "paperSize": "a4",
+        "margin": {
+            "right": 62,
+            "left": 62,
+            "top": 56,
+            "bottom": 56
+        }
+    },
+    "plugins": [
+        "back-to-top-button",
+        "chapter-fold",
+        "expandable-chapters-small",
+        "code",
+        "copy-code-button",
+        "-lunr", 
+        "-search", 
+        "search-pro",
+        "advanced-emoji",
+        "github",
+        "splitter",
+        "page-toc-button",
+        "alerts",
+        "flexible-alerts",
+        "pageview-count",
+        "auto-scroll-table",
+        "popup"
+    ],
+    "pluginsConfig": {
+        "github": {
+            "url": "https://github.com"
+        }
+    }
+}
