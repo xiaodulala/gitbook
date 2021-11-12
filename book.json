@@ -1,23 +1,16 @@
 {
-    "root": ".",
     "author": "DuYong",
     "title": "DuYong Gitbook",
-    "language": "zh-hans",
-    "description": "This is gitbook",
-    "isbn": "000-0-00-000000-0",
-    "direction": "ltr",
-    "gitbook": ">=3.2.3",
+    "description": "dyong's gitbook",
+    "generator": "site",
     "structure": {
         "readme": "README.md",
         "summary": "SUMMARY.md",
         "glossary": "GLOSSARY.md"
     },
-    "variables": {
-        "blog": ""
-    },
+    "variables": {},
     "links": {
         "sidebar": {
-            "Blog": "",
             "Github": "https://github.com/xiaodulala"
         }
     },
@@ -41,31 +34,27 @@
         }
     },
     "plugins": [
-        "-lunr",
-        "-search",
-        "advanced-emoji",
-        "search-plus",
-        "github",
-        "splitter",
-        "anchor-navigation-ex",
+        "back-to-top-button",
         "chapter-fold",
         "expandable-chapters-small",
         "code",
+        "copy-code-button",
+        "-lunr", 
+        "-search", 
+        "search-pro",
+        "advanced-emoji",
+        "github",
+        "splitter",
+        "page-toc-button",
         "alerts",
-        "-insert-logo",
-        "flexible-alerts"
+        "flexible-alerts",
+        "pageview-count",
+        "auto-scroll-table",
+        "popup"
     ],
     "pluginsConfig": {
         "github": {
             "url": "https://github.com"
-        },
-        "flexible-alerts": {
-            "style": "callout",
-            "comment": {
-                "label": "Comment",
-                "icon": "fa fa-comments",
-                "className": "info"
-            }
         }
     }
 }
