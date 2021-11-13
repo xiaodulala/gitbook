@@ -50,11 +50,22 @@
         "flexible-alerts",
         "pageview-count",
         "auto-scroll-table",
-        "popup"
+        "popup",
+        "tbfed-pagefooter"
+    
     ],
     "pluginsConfig": {
         "github": {
             "url": "https://github.com"
+        },
+        "tbfed-pagefooter": {
+            "copyright":"Copyright &copy Du Yong ",
+            "modify_label": "该文件修订时间：",
+            "modify_format": "YYYY-MM-DD HH:mm:ss"
+        },
+        "page-toc-button": {
+            "maxTocDepth": 2,
+            "minTocSize": 2
         }
     }
 }
