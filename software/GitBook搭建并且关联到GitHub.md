@@ -227,7 +227,7 @@ git push --force --quiet "git@github.com:xiaodulala/gitbook-note.git" master:gh-
 
 github允许开发者把每个操作写成独立的脚本，存放到代码仓库里。供其他人引用。所以，当我们的项目需要使用github actions时，就不需要编写复杂的从0开始的脚本。我们可以直接引用别人写好的actions. [github actions 官方市场](https://github.com/marketplace?type=actions)
 
-gitbook的发布我选用了 这一个插件。
+gitbook的发布我选用了 [这一个插件](https://github.com/marketplace/actions/publish-gitbook)。
 
 工作流文件如下: 
 
