@@ -1,3 +1,3 @@
 # Introduction
 
-welcome
+[welcome](https://note.tyduyong.com/)
