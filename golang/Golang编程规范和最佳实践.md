@@ -44,11 +44,11 @@ Go语言虽然简单易学，但是想要变成真正的编程个高手，写出
 
 为什么这么设计:  [如何设计一套合理的错误码](../design/错误码.md)
 
-使用错误包: `github.com/xiaodulala/component-tools/tree/main/pkg/errors`
+使用错误包: [github.com/xiaodulala/component-tools/tree/main/pkg/errors](https://github.com/xiaodulala/component-tools/tree/main/pkg/errors)
 
-通用错误码引用：`github.com/xiaodulala/component-tools/tree/main/component/errorcode`
+通用错误码引用：[github.com/xiaodulala/component-tools/tree/main/component/errorcode](https://github.com/xiaodulala/component-tools/tree/main/component/errorcode)
 
-错误码注册工具和错误码文档生成工具: `github.com/xiaodulala/component-tools/tree/main/tools/codegen`
+错误码注册工具和错误码文档生成工具: [github.com/xiaodulala/component-tools/tree/main/tools/codegen](https://github.com/xiaodulala/component-tools/tree/main/component/errorcode)
 
 ## 错误处理
 
