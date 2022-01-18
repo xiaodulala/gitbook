@@ -16,5 +16,6 @@
 	* [如何设计一套合理的错误码](design/错误码.md)
 * [软件安装和使用](software/README.md)
   * [GitBook搭建并且关联到GitHub Pages](software/GitBook搭建并且关联到GitHub.md)
+  * [docker&docker-compose安装](software/docker&docker-compose安装.md)
   * [docker-compose启动应用](software/docker-compose安装软件.md)
   * [数据源实时同步中间件之canal和Maxwell](software/数据源实时同步中间件之canal和Maxwell.md)
