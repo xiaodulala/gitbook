@@ -146,71 +146,7 @@ services:
 
 ### docker 安装kafka集群
 
-```yaml
-# 10.0.0.99
-version: '3.1'
-services:
-  kafka1:
-    image: wurstmeister/kafka
-    restart: always
-    hostname: kafka1
-    container_name: kafka1
-    ports:
-      - 9092:9092
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_HOST_NAME: 10.0.0.99
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.99:9092
-      KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
-    volumes:
-      - ./logs:/kafka
-```
-
-```yaml
-# 10.0.0.100
-version: '3.1'
-services:
-  kafka2:
-    image: wurstmeister/kafka
-    restart: always
-    hostname: kafka2
-    container_name: kafka2
-    ports:
-      - 9092:9092
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ADVERTISED_HOST_NAME: 10.0.0.100
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.100:9092
-      KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
-    volumes:
-      - ./logs:/kafka
-```
-
-```yaml
-# 10.0.0.101
-version: '3.1'
-services:
-  kafka3:
-    image: wurstmeister/kafka
-    restart: always
-    hostname: kafka3
-    container_name: kafka3
-    ports:
-      - 9092:9092
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ADVERTISED_HOST_NAME: 10.0.0.101
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.101:9092
-      KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
-    volumes:
-      - ./logs:/kafka
-```
+[docker-compose启动应用](./docker-compose安装软件.md)
 
 ## docker启动maxwell并使用kafka
 
