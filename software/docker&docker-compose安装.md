@@ -111,3 +111,29 @@ sudo systemctl restart docker
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
+
+### 卸载
+
+```bash
+sudo yum remove docker-ce docker-ce-cli containerd.io
+
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+```
+
+### 问题
+
+centos 3.10.0-229.7.2.el7.x86_64 这个版本
+
+只要安装最新的docker,端口映射无法访问。 安装旧版本
+
+
+```bash
+sudo yum -y --downloadonly update
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+sudo yum -y install docker-ce-18.03.1.ce
+
+# 剩下都一样
+```
