@@ -28,6 +28,7 @@ log-bin=mysql-bin
 binlog_format=row
 # binlog同步事务数(5.7默认)
 sync_binlog=1
+skip-grant-tables
 [client]
 #utf8mb4字符集可以存储emoji表情字符
 #default-character-set=utf8
@@ -51,6 +52,7 @@ services:
       - ./datadir:/var/lib/mysql
       - ./conf/my.cnf:/etc/my.cnf
     environment:
+      - MYSQL_ROOT_PASSWORD=duyong
       - TZ=Asia/Shanghai
     ports:
       - 3306:3306
@@ -201,7 +203,7 @@ mkdir -p zk3
 version: '3.1'
 
 services:
-  zoo1:
+  zoo:
     image: zookeeper
     restart: always
     hostname: zoo1
@@ -219,7 +221,7 @@ services:
 version: '3.1'
 
 services:
-  zoo1:
+  zoo:
     image: zookeeper
     restart: always
     hostname: zoo2
@@ -237,7 +239,7 @@ services:
 version: '3.1'
 
 services:
-  zoo1:
+  zoo:
     image: zookeeper
     restart: always
     hostname: zoo3
