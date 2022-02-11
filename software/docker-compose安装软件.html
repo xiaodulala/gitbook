@@ -224,6 +224,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.2.3" data-path="../golang/kernel/Golang协程调度机制.html">
+            
+                <a href="../golang/kernel/Golang协程调度机制.html">
+            
+                    
+                    Go协程调度机制
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -773,6 +786,8 @@ mkdir -p zk3
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> zoo1:<span class="hljs-number">2181</span>,zoo2:<span class="hljs-number">2182</span>,zoo3:<span class="hljs-number">2183</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://kafka1:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka1:<span class="hljs-number">9092</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./kafka1/logs:/kafka
 <span class="hljs-attr">  kafka2:</span>
@@ -788,6 +803,8 @@ mkdir -p zk3
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> zoo1:<span class="hljs-number">2181</span>,zoo2:<span class="hljs-number">2182</span>,zoo3:<span class="hljs-number">2183</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://kafka2:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka2:<span class="hljs-number">9092</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./kafka2/logs:/kafka
 <span class="hljs-attr">  kafka3:</span>
@@ -803,6 +820,8 @@ mkdir -p zk3
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> zoo1:<span class="hljs-number">2181</span>,zoo2:<span class="hljs-number">2182</span>,zoo3:<span class="hljs-number">2183</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://kafka3:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka3:<span class="hljs-number">9092</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./kafka3/logs:/kafka
 </code></pre>
@@ -846,7 +865,8 @@ kafka-console-consumer.sh --bootstrap-server 10.0.0.99:9092 --topic <span class=
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.99</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.100</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.101</span>:<span class="hljs-number">2181</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.99</span>:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka1:<span class="hljs-number">9092</span>
-<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">3</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./logs:/kafka
 </code></pre>
@@ -867,7 +887,8 @@ kafka-console-consumer.sh --bootstrap-server 10.0.0.99:9092 --topic <span class=
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.99</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.100</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.101</span>:<span class="hljs-number">2181</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.100</span>:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka2:<span class="hljs-number">9092</span>
-<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">3</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./logs:/kafka
 </code></pre>
@@ -888,12 +909,90 @@ kafka-console-consumer.sh --bootstrap-server 10.0.0.99:9092 --topic <span class=
 <span class="hljs-attr">      KAFKA_ZOOKEEPER_CONNECT:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.99</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.100</span>:<span class="hljs-number">2181</span>,<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.101</span>:<span class="hljs-number">2181</span>
 <span class="hljs-attr">      KAFKA_ADVERTISED_LISTENERS:</span> PLAINTEXT://<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.101</span>:<span class="hljs-number">9092</span>
 <span class="hljs-attr">      KAFKA_LISTENERS:</span> PLAINTEXT://kafka3:<span class="hljs-number">9092</span>
-<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">3</span>
+<span class="hljs-attr">      KAFKA_DEFAULT_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
+<span class="hljs-attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="hljs-number">2</span>
 <span class="hljs-attr">    volumes:</span>
 <span class="hljs-bullet">      -</span> ./logs:/kafka
 </code></pre>
+<h1 id="nsq-&#x5355;&#x673A;&#x90E8;&#x7F72;">NSQ &#x5355;&#x673A;&#x90E8;&#x7F72;</h1>
+<pre><code class="lang-yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&apos;3&apos;</span>
+<span class="hljs-attr">services:</span>
+<span class="hljs-attr">  nsqlookupd_0:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqlookupd --broadcast-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span> --tcp-address=:<span class="hljs-number">14160</span> --http-address=:<span class="hljs-number">14161</span>
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14160:14160&quot;</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14161:14161&quot;</span>
+<span class="hljs-attr">  nsqlookupd_1:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqlookupd --broadcast-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span> --tcp-address=:<span class="hljs-number">14170</span> --http-address=:<span class="hljs-number">14171</span>
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14170:14170&quot;</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14171:14171&quot;</span>
+<span class="hljs-attr">  nsqd_0:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqd  --broadcast-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span> --tcp-address=:<span class="hljs-number">14150</span> --http-address=:<span class="hljs-number">14151</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14160</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14170</span>
+<span class="hljs-attr">    depends_on:</span>
+<span class="hljs-bullet">      -</span> nsqlookupd_0
+<span class="hljs-bullet">      -</span> nsqlookupd_1
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14150:14150&quot;</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14151:14151&quot;</span>
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    volumes:</span>
+<span class="hljs-bullet">      -</span> /home/duyong/dy_work/docker_data/nsq_simple/<span class="hljs-number">0</span>_nsqd_data:/data
+<span class="hljs-attr">  nsqd_1:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqd  --broadcast-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span> --tcp-address=:<span class="hljs-number">14140</span> --http-address=:<span class="hljs-number">14141</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14160</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14170</span>
+<span class="hljs-attr">    depends_on:</span>
+<span class="hljs-bullet">      -</span> nsqlookupd_0
+<span class="hljs-bullet">      -</span> nsqlookupd_1
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14140:14140&quot;</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14141:14141&quot;</span>
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    volumes:</span>
+<span class="hljs-bullet">      -</span> /home/duyong/dy_work/docker_data/nsq_simple/<span class="hljs-number">1</span>_nsqd_data:/data
+<span class="hljs-attr">  nsqd_2:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqd  --broadcast-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span> --tcp-address=:<span class="hljs-number">14130</span> --http-address=:<span class="hljs-number">14131</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14160</span> --lookupd-tcp-address=<span class="hljs-number">10.3</span><span class="hljs-number">.1</span><span class="hljs-number">.127</span>:<span class="hljs-number">14170</span>
+<span class="hljs-attr">    depends_on:</span>
+<span class="hljs-bullet">      -</span> nsqlookupd_0
+<span class="hljs-bullet">      -</span> nsqlookupd_1
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14130:14130&quot;</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;14131:14131&quot;</span>
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    volumes:</span>
+<span class="hljs-bullet">      -</span> /home/duyong/dy_work/docker_data/nsq_simple/<span class="hljs-number">2</span>_nsqd_data:/data
+<span class="hljs-attr">  nsqadmin:</span>
+<span class="hljs-attr">    image:</span> nsqio/nsq
+<span class="hljs-attr">    command:</span> /nsqadmin --lookupd-http-address=nsqlookupd:<span class="hljs-number">14161</span> --lookupd-http-address=nsqlookupd:<span class="hljs-number">14171</span>
+<span class="hljs-attr">    depends_on:</span>
+<span class="hljs-bullet">      -</span> nsqlookupd_0
+<span class="hljs-bullet">      -</span> nsqlookupd_1
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;4171:4171&quot;</span>
+<span class="hljs-attr">    restart:</span> always
+</code></pre>
+<h1 id="redis">Redis</h1>
+<pre><code class="lang-yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&apos;3&apos;</span>
+<span class="hljs-attr">services:</span>
+<span class="hljs-attr">  redis:</span>
+<span class="hljs-attr">    image:</span> redis:latest
+<span class="hljs-attr">    container_name:</span> duyong_redis
+<span class="hljs-attr">    volumes:</span>
+<span class="hljs-bullet">      -</span> ./data:/data
+<span class="hljs-bullet">      -</span> ./redis.conf:/usr/local/etc/redis/redis.conf
+<span class="hljs-bullet">      -</span> ./logs:/logs
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-number">6379</span>:<span class="hljs-number">6379</span>
+<span class="hljs-attr">    restart:</span> always
+</code></pre>
 <footer class="page-footer"><span class="copyright">Copyright &#xA9; Du Yong  all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x8BE5;&#x6587;&#x4EF6;&#x4FEE;&#x8BA2;&#x65F6;&#x95F4;&#xFF1A;
-2022-01-19 10:44:43
+2022-02-11 08:59:50
 </span></footer>
 <script>console.log("plugin-popup....");document.onclick = function(e){ e.target.tagName === "IMG" && window.open(e.target.src,e.target.src)}</script><style>img{cursor:pointer}</style>
                                 
@@ -938,7 +1037,7 @@ kafka-console-consumer.sh --bootstrap-server 10.0.0.99:9092 --topic <span class=
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"docker-compose启动应用","level":"1.4.3","depth":2,"next":{"title":"数据源实时同步中间件之canal和Maxwell","level":"1.4.4","depth":2,"path":"software/数据源实时同步中间件之canal和Maxwell.md","ref":"software/数据源实时同步中间件之canal和Maxwell.md","articles":[]},"previous":{"title":"docker&docker-compose安装","level":"1.4.2","depth":2,"path":"software/docker&docker-compose安装.md","ref":"software/docker&docker-compose安装.md","articles":[]},"dir":"ltr"},"config":{"plugins":["back-to-top-button","chapter-fold","expandable-chapters-small","-lunr","code","copy-code-button","-search","search-pro","advanced-emoji","github","splitter","page-toc-button","alerts","flexible-alerts","pageview-count","auto-scroll-table","popup","tbfed-pagefooter"],"styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy Du Yong ","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"github":{"url":"https://github.com"},"splitter":{},"search-pro":{},"auto-scroll-table":{},"popup":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"back-to-top-button":{},"pageview-count":{},"alerts":{},"expandable-chapters-small":{},"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"callout","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"copy-code-button":{},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"DuYong","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"DuYong Gitbook","links":{"sidebar":{"Github":"https://github.com/xiaodulala"}},"gitbook":"*","description":"dyong's gitbook"},"file":{"path":"software/docker-compose安装软件.md","mtime":"2022-01-19T10:44:43.923Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-01-19T10:45:33.484Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"docker-compose启动应用","level":"1.4.3","depth":2,"next":{"title":"数据源实时同步中间件之canal和Maxwell","level":"1.4.4","depth":2,"path":"software/数据源实时同步中间件之canal和Maxwell.md","ref":"software/数据源实时同步中间件之canal和Maxwell.md","articles":[]},"previous":{"title":"docker&docker-compose安装","level":"1.4.2","depth":2,"path":"software/docker&docker-compose安装.md","ref":"software/docker&docker-compose安装.md","articles":[]},"dir":"ltr"},"config":{"plugins":["back-to-top-button","chapter-fold","expandable-chapters-small","-lunr","code","copy-code-button","-search","search-pro","advanced-emoji","github","splitter","page-toc-button","alerts","flexible-alerts","pageview-count","auto-scroll-table","popup","tbfed-pagefooter"],"styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy Du Yong ","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"github":{"url":"https://github.com"},"splitter":{},"search-pro":{},"auto-scroll-table":{},"popup":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"back-to-top-button":{},"pageview-count":{},"alerts":{},"expandable-chapters-small":{},"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"callout","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"copy-code-button":{},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"DuYong","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"DuYong Gitbook","links":{"sidebar":{"Github":"https://github.com/xiaodulala"}},"gitbook":"*","description":"dyong's gitbook"},"file":{"path":"software/docker-compose安装软件.md","mtime":"2022-02-11T08:59:50.987Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-02-11T09:00:40.049Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
