@@ -156,9 +156,7 @@ docker run -it --rm zendesk/maxwell bin/maxwell --user=maxwell\
     --kafka.bootstrap.servers=10.0.0.99:9092,10.0.0.100:9092,10.0.0.101:9092 --kafka_topic=maxwell
     
  # 后台启动   
- docker run -itd zendesk/maxwell bin/maxwell --user=maxwell\
-    --password=duyong --host=10.0.0.99 --producer=kafka \
-    --kafka.bootstrap.servers=10.0.0.99:9092,10.0.0.100:9092,10.0.0.101:9092 --kafka_topic=maxwell
+docker run -it --name=maxwell -d   zendesk/maxwell bin/maxwell --user=maxwell --password=duyong --host=10.0.0.246 --port=13306  --producer=kafka --kafka.bootstrap.servers=10.0.0.247:9092,10.0.0.248:9092,10.0.0.230:9092 --kafka_topic=maxwell
     
     
 docker run -it --rm zendesk/maxwell bin/maxwell --user=maxwell\
@@ -166,9 +164,7 @@ docker run -it --rm zendesk/maxwell bin/maxwell --user=maxwell\
     --kafka.bootstrap.servers=10.0.0.99:9092,10.0.0.100:9092,10.0.0.101:9092 --kafka_topic=maxwell
  
  # 后台启动   
-docker run -itd zendesk/maxwell bin/maxwell --user=maxwell\
-    --password=duyong --host=10.0.0.100 --producer=kafka \
-    --kafka.bootstrap.servers=10.0.0.99:9092,10.0.0.100:9092,10.0.0.101:9092 --kafka_topic=maxwell
+docker run -it --name=maxwell -d   zendesk/maxwell bin/maxwell --user=maxwell --password=duyong --host=10.0.0.246 --port=13306  --producer=kafka --kafka.bootstrap.servers=10.0.0.247:9092,10.0.0.248:9092,10.0.0.230:9092 --kafka_topic=maxwell
 ```
 
 

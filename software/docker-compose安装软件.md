@@ -307,6 +307,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2182,zoo3:2183
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./kafka1/logs:/kafka
   kafka2:
@@ -322,6 +324,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2182,zoo3:2183
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./kafka2/logs:/kafka
   kafka3:
@@ -337,6 +341,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2182,zoo3:2183
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./kafka3/logs:/kafka
 ```
@@ -384,7 +390,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.99:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./logs:/kafka
 ```
@@ -407,7 +414,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.100:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./logs:/kafka
 ```
@@ -430,7 +438,93 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 10.0.0.99:2181,10.0.0.100:2181,10.0.0.101:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.101:9092
       KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     volumes:
       - ./logs:/kafka
+```
+
+
+# NSQ 单机部署
+
+```yaml
+version: '3'
+services:
+  nsqlookupd_0:
+    image: nsqio/nsq
+    command: /nsqlookupd --broadcast-address=10.3.1.127 --tcp-address=:14160 --http-address=:14161
+    restart: always
+    ports:
+      - "14160:14160"
+      - "14161:14161"
+  nsqlookupd_1:
+    image: nsqio/nsq
+    command: /nsqlookupd --broadcast-address=10.3.1.127 --tcp-address=:14170 --http-address=:14171
+    restart: always
+    ports:
+      - "14170:14170"
+      - "14171:14171"
+  nsqd_0:
+    image: nsqio/nsq
+    command: /nsqd  --broadcast-address=10.3.1.127 --tcp-address=:14150 --http-address=:14151 --lookupd-tcp-address=10.3.1.127:14160 --lookupd-tcp-address=10.3.1.127:14170
+    depends_on:
+      - nsqlookupd_0
+      - nsqlookupd_1
+    ports:
+      - "14150:14150"
+      - "14151:14151"
+    restart: always
+    volumes:
+      - /home/duyong/dy_work/docker_data/nsq_simple/0_nsqd_data:/data
+  nsqd_1:
+    image: nsqio/nsq
+    command: /nsqd  --broadcast-address=10.3.1.127 --tcp-address=:14140 --http-address=:14141 --lookupd-tcp-address=10.3.1.127:14160 --lookupd-tcp-address=10.3.1.127:14170
+    depends_on:
+      - nsqlookupd_0
+      - nsqlookupd_1
+    ports:
+      - "14140:14140"
+      - "14141:14141"
+    restart: always
+    volumes:
+      - /home/duyong/dy_work/docker_data/nsq_simple/1_nsqd_data:/data
+  nsqd_2:
+    image: nsqio/nsq
+    command: /nsqd  --broadcast-address=10.3.1.127 --tcp-address=:14130 --http-address=:14131 --lookupd-tcp-address=10.3.1.127:14160 --lookupd-tcp-address=10.3.1.127:14170
+    depends_on:
+      - nsqlookupd_0
+      - nsqlookupd_1
+    ports:
+      - "14130:14130"
+      - "14131:14131"
+    restart: always
+    volumes:
+      - /home/duyong/dy_work/docker_data/nsq_simple/2_nsqd_data:/data
+  nsqadmin:
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:14161 --lookupd-http-address=nsqlookupd:14171
+    depends_on:
+      - nsqlookupd_0
+      - nsqlookupd_1
+    ports:
+      - "4171:4171"
+    restart: always
+```
+
+# Redis
+
+
+```yaml
+version: '3'
+services:
+  redis:
+    image: redis:latest
+    container_name: duyong_redis
+    volumes:
+      - ./data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./logs:/logs
+    ports:
+      - 6379:6379
+    restart: always
 ```
