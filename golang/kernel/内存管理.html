@@ -1,0 +1,768 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Go内存管理 · DuYong Gitbook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="DuYong">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-back-to-top-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-chapter-fold/chapter-fold.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-expandable-chapters-small/expandable-chapters-small.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-code/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search-pro/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-advanced-emoji/emoji-website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-alerts/style.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-flexible-alerts/style.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-pageview-count/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-auto-scroll-table/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-tbfed-pagefooter/footer.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../lib/" />
+    
+    
+    <link rel="prev" href="Golang协程调度机制.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+    
+        
+        <li>
+            <a href="https://github.com/xiaodulala" target="_blank" class="custom-link">Github</a>
+        </li>
+    
+    
+
+    
+    <li class="divider"></li>
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Golang
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../Golang编程规范和最佳实践.html">
+            
+                <a href="../Golang编程规范和最佳实践.html">
+            
+                    
+                    Go语言编码规范和最佳实践
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Go语言核心
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.2.1" data-path="Go语言测试.html">
+            
+                <a href="Go语言测试.html">
+            
+                    
+                    Go语言如何测试
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2.2" data-path="Go语言错误处理.html">
+            
+                <a href="Go语言错误处理.html">
+            
+                    
+                    Go语言错误处理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2.3" data-path="Golang协程调度机制.html">
+            
+                <a href="Golang协程调度机制.html">
+            
+                    
+                    Go协程调度机制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.2.4" data-path="内存管理.html">
+            
+                <a href="内存管理.html">
+            
+                    
+                    Go内存管理
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../lib/">
+            
+                <a href="../lib/">
+            
+                    
+                    Go语言三方库
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.3.1" data-path="../lib/aa.html">
+            
+                <a href="../lib/aa.html">
+            
+                    
+                    Test包
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.2" data-path="../lib/命令行参数解析工具Pflag.html">
+            
+                <a href="../lib/命令行参数解析工具Pflag.html">
+            
+                    
+                    命令行参数解析工具-pflag包
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.3" data-path="../lib/配置文件解析工具viper.html">
+            
+                <a href="../lib/配置文件解析工具viper.html">
+            
+                    
+                    配置文件解析工具-viper包
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.4" data-path="../lib/命令行框架Cobra.html">
+            
+                <a href="../lib/命令行框架Cobra.html">
+            
+                    
+                    命令行框架Cobra包
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../design/">
+            
+                <a href="../../design/">
+            
+                    
+                    架构和设计
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../design/微服务.html">
+            
+                <a href="../../design/微服务.html">
+            
+                    
+                    微服务架构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../design/错误码.html">
+            
+                <a href="../../design/错误码.html">
+            
+                    
+                    如何设计一套合理的错误码
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../../cloudNative/">
+            
+                <a href="../../cloudNative/">
+            
+                    
+                    云原生技术
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../../cloudNative/docker核心技术.html">
+            
+                <a href="../../cloudNative/docker核心技术.html">
+            
+                    
+                    docker的核心技术
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../../software/">
+            
+                <a href="../../software/">
+            
+                    
+                    软件安装和使用
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../../software/GitBook搭建并且关联到GitHub.html">
+            
+                <a href="../../software/GitBook搭建并且关联到GitHub.html">
+            
+                    
+                    GitBook搭建并且关联到GitHub Pages
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../../software/docker&docker-compose安装.html">
+            
+                <a href="../../software/docker&docker-compose安装.html">
+            
+                    
+                    docker&docker-compose安装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../../software/docker-compose安装软件.html">
+            
+                <a href="../../software/docker-compose安装软件.html">
+            
+                    
+                    docker-compose启动应用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../../software/数据源实时同步中间件之canal和Maxwell.html">
+            
+                <a href="../../software/数据源实时同步中间件之canal和Maxwell.html">
+            
+                    
+                    数据源实时同步中间件之canal和Maxwell
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Go内存管理</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x524D;&#x8A00;">&#x524D;&#x8A00;</h1>
+<p>&#x6211;&#x4EEC;Golang&#x8FDB;&#x7A0B;&#x8C03;&#x5EA6;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x5185;&#x5B58;&#x53EF;&#x4EE5;&#x5206;&#x4E3A;&#x6570;&#x636E;&#x6BB5;&#xFF0C;&#x4EE3;&#x7801;&#x6BB5;&#x548C;&#x5806;&#x6808;&#x7B49;&#x3002;&#x5BF9;&#x4E8E;java&#x6216;&#x8005;golang&#x7B49;&#x9AD8;&#x7EA7;&#x7684;&#x8BED;&#x8A00;&#x6765;&#x8BF4;&#xFF0C;&#x4ED6;&#x4EEC;&#x7684;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x4E3B;&#x8981;&#x662F;&#x9488;&#x5BF9;&#x5806;&#x7684;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x3002;</p>
+<h1 id="&#x5806;&#x5185;&#x5B58;&#x7684;&#x7BA1;&#x7406;&#x673A;&#x5236;">&#x5806;&#x5185;&#x5B58;&#x7684;&#x7BA1;&#x7406;&#x673A;&#x5236;</h1>
+<p><img src="../../img/golang/WX20220301-140903@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<ul>
+<li>&#x521D;&#x59CB;&#x5316;&#x8FDE;&#x7EED;&#x7684;&#x5185;&#x5B58;&#x5757;&#x4F5C;&#x4E3A;&#x5806;&#x5185;&#x5B58;</li>
+<li>&#x6709;&#x5185;&#x5B58;&#x7533;&#x8BF7;&#x7684;&#x65F6;&#x5019;&#xFF0C;Allocator&#x4ECE;&#x5806;&#x5185;&#x5B58;&#x7684;&#x672A;&#x5206;&#x914D;&#x533A;&#x57DF;&#x5206;&#x5272;&#x5C0F;&#x5185;&#x5B58;&#x5757;&#x3002;</li>
+<li>&#x7528;&#x94FE;&#x8868;&#x5C06;&#x5DF2;&#x7ECF;&#x5206;&#x914D;&#x7684;&#x5185;&#x5B58;&#x8FDE;&#x63A5;&#x8D77;&#x6765;&#x3002;</li>
+<li>&#x9700;&#x8981;&#x4FE1;&#x606F;&#x63CF;&#x8FF0;&#x6BCF;&#x4E2A;&#x5185;&#x5B58;&#x5757;&#x7684;&#x5143;&#x6570;&#x636E;: &#x5927;&#x5C0F;&#xFF0C;&#x662F;&#x5426;&#x4F7F;&#x7528;&#xFF0C;&#x4E0B;&#x4E00;&#x4E2A;&#x5185;&#x5B58;&#x5757;&#x7684;&#x5730;&#x5740;&#x7B49;&#x3002;</li>
+<li>&#x5185;&#x5B58;&#x56DE;&#x6536;&#x5C31;&#x662F;&#x626B;&#x63CF;&#x5806;&#x5185;&#x5B58;&#xFF0C;&#x5C06;&#x4E0D;&#x518D;&#x88AB;&#x4F7F;&#x7528;&#x7684;&#x5185;&#x5B58;&#x8BBE;&#x7F6E;&#x4E3A;unused.</li>
+</ul>
+<p><img src="../../img/golang/WX20220301-141756@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<p> &#x5806;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x7684;&#x6311;&#x6218;:</p>
+<ol>
+<li>&#x5185;&#x5B58;&#x5206;&#x914D;&#x9700;&#x8981;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#xFF0C;&#x5728;&#x9891;&#x7E41;&#x5185;&#x5B58;&#x5206;&#x914D;&#x7684;&#x65F6;&#x5019;,&#x7CFB;&#x7EDF;&#x6027;&#x80FD;&#x8F83;&#x4F4E;&#x3002;</li>
+<li>&#x591A;&#x7EBF;&#x7A0B;&#x5171;&#x4EAB;&#x76F8;&#x540C;&#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#xFF0C;&#x540C;&#x65F6;&#x7533;&#x8BF7;&#x5185;&#x5B58;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x52A0;&#x9501;&#xFF0C;&#x5426;&#x5219;&#x4F1A;&#x4EA7;&#x751F;&#x540C;&#x4E00;&#x5757;&#x5185;&#x5B58;&#x88AB;&#x591A;&#x4E2A;&#x7EBF;&#x7A0B;&#x8BBF;&#x95EE;&#x7684;&#x60C5;&#x51B5;&#x3002;</li>
+<li>&#x5185;&#x5B58;&#x788E;&#x7247;&#x5316;&#x95EE;&#x9898;&#xFF0C;&#x7ECF;&#x8FC7;&#x4E0D;&#x65AD;&#x7684;&#x5185;&#x5B58;&#x5206;&#x914D;&#x548C;&#x56DE;&#x6536;&#xFF0C;&#x5185;&#x5B58;&#x788E;&#x7247;&#x4F1A;&#x6BD4;&#x8F83;&#x4E25;&#x91CD;&#xFF0C;&#x5185;&#x5B58;&#x7684;&#x4F7F;&#x7528;&#x6548;&#x7387;&#x964D;&#x4F4E;&#x3002;</li>
+</ol>
+<h1 id="tcmalloc">TCMalloc</h1>
+<p> <img src="../../img/golang/WX20220301-142842@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<ul>
+<li>page&#xFF1A; &#x5185;&#x5B58;&#x9875;&#xFF0C;&#x4E00;&#x5757;8k&#x5927;&#x5C0F;&#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x3002;Go&#x4E0E;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x4E4B;&#x95F4;&#x7684;&#x5185;&#x5B58;&#x7533;&#x8BF7;&#x548C;&#x91CA;&#x653E;&#xFF0C;&#x90FD;&#x662F;&#x4EE5;page&#x4E3A;&#x5355;&#x4F4D;&#x7684;&#x3002;</li>
+<li>span&#xFF1A; &#x5185;&#x5B58;&#x5757;&#xFF0C;&#x4E00;&#x4E2A;&#x6216;&#x591A;&#x4E2A;&#x8FDE;&#x7EED;&#x7684;page&#x7EC4;&#x6210;&#x4E00;&#x4E2A;span</li>
+<li>sizeclass: &#x7A7A;&#x95F4;&#x89C4;&#x683C;&#xFF0C;&#x6BCF;&#x4E2A;span&#x90FD;&#x5E26;&#x6709;&#x4E00;&#x4E2A;sizeclass,&#x6807;&#x8BB0;&#x7740;span&#x4E2D;&#x7684;page&#x8BE5;&#x5982;&#x4F55;&#x4F7F;&#x7528;</li>
+<li>object:&#x5BF9;&#x8C61;&#xFF0C;&#x7528;&#x6765;&#x5B58;&#x50A8;&#x4E00;&#x4E2A;&#x53D8;&#x91CF;&#x6570;&#x636E;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#xFF0C;&#x4E00;&#x4E2A;span&#x5728;&#x521D;&#x59CB;&#x5316;&#x65F6;&#xFF0C;&#x4F1A;&#x88AB;&#x5207;&#x5272;&#x6210;&#x4E00;&#x5806;&#x7B49;&#x5927; &#x7684; object ;&#x5047;&#x8BBE; object &#x7684;&#x5927;&#x5C0F;&#x662F; 16B &#xFF0C;span &#x5927;&#x5C0F;&#x662F; 8K &#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x4F1A;&#x628A; span &#x4E2D;&#x7684; page &#x5C31;&#x4F1A; &#x88AB;&#x521D;&#x59CB;&#x5316; 8K / 16B = 512 &#x4E2A; object &#x3002;&#x6240;&#x8C13;&#x5185;&#x5B58;&#x5206;&#x914D;&#xFF0C;&#x5C31;&#x662F;&#x5206;&#x914D;&#x4E00;&#x4E2A; object &#x51FA;&#x53BB;</li>
+</ul>
+<ul>
+<li>&#x5BF9;&#x8C61;&#x5927;&#x5C0F;&#x5B9A;&#x4E49;<ul>
+<li>&#x5C0F;&#x5BF9;&#x8C61;&#x5927;&#x5C0F;:0~256KB</li>
+<li>&#x4E2D;&#x5BF9;&#x8C61;&#x5927;&#x5C0F;:256KB~1MB </li>
+<li>&#x5927;&#x5BF9;&#x8C61;&#x5927;&#x5C0F;:&gt;1MB<ul>
+<li>&#x5C0F;&#x5BF9;&#x8C61;&#x7684;&#x5206;&#x914D;&#x6D41;&#x7A0B;</li>
+</ul>
+</li>
+<li>ThreadCache -&gt; CentralCache -&gt; HeapPage&#xFF0C;&#x5927;&#x90E8;&#x5206;&#x65F6;&#x5019;&#xFF0C;ThreadCache &#x7F13;&#x5B58;&#x90FD;&#x662F;&#x8DB3;&#x591F;&#x7684;&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x53BB;&#x8BBF;&#x95EE; CentralCache &#x548C; HeapPage&#xFF0C;&#x65E0;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x914D;&#x5408;&#x65E0;&#x9501;&#x5206;&#x914D;&#xFF0C;&#x5206;&#x914D;&#x6548;&#x7387;&#x662F;&#x975E;&#x5E38;&#x9AD8;&#x7684;<ul>
+<li>&#x4E2D;&#x5BF9;&#x8C61;&#x5206;&#x914D;&#x6D41;&#x7A0B;</li>
+</ul>
+</li>
+<li>&#x76F4;&#x63A5;&#x5728; PageHeap &#x4E2D;&#x9009;&#x62E9;&#x9002;&#x5F53;&#x7684;&#x5927;&#x5C0F;&#x5373;&#x53EF;&#xFF0C;128 Page &#x7684; Span &#x6240;&#x4FDD;&#x5B58;&#x7684;&#x6700;&#x5927;&#x5185;&#x5B58;&#x5C31;&#x662F; 1MB <ul>
+<li>&#x5927;&#x5BF9;&#x8C61;&#x5206;&#x914D;&#x6D41;&#x7A0B;</li>
+</ul>
+</li>
+<li>&#x4ECE; large span set &#x9009;&#x62E9;&#x5408;&#x9002;&#x6570;&#x91CF;&#x7684;&#x9875;&#x9762;&#x7EC4;&#x6210; span&#xFF0C;&#x7528;&#x6765;&#x5B58;&#x50A8;&#x6570;&#x636E;</li>
+</ul>
+</li>
+</ul>
+<h1 id="go&#x8BED;&#x8A00;&#x5185;&#x5B58;&#x5206;&#x914D;">Go&#x8BED;&#x8A00;&#x5185;&#x5B58;&#x5206;&#x914D;</h1>
+<p> <img src="../../img/golang/WX20220301-145408@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<h1 id="&#x5185;&#x5B58;&#x56DE;&#x6536;">&#x5185;&#x5B58;&#x56DE;&#x6536;</h1>
+<h2 id="&#x56DE;&#x6536;&#x65B9;&#x5F0F;">&#x56DE;&#x6536;&#x65B9;&#x5F0F;</h2>
+<ul>
+<li>&#x5F15;&#x7528;&#x8BA1;&#x6570;(Python,PHP,Swift)<ul>
+<li>&#x6BCF;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x7EF4;&#x62A4;&#x4E00;&#x4E2A;&#x5F15;&#x7528;&#x8BA1;&#x6570;,&#x5F53;&#x5F15;&#x7528;&#x8BE5;&#x5BF9;&#x8C61;&#x7684;&#x5BF9;&#x8C61;&#x88AB;&#x9500;&#x6BC1;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x51CF;1&#xFF0C;&#x5F53;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x4E3A;0&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x56DE;&#x6536;&#x8BE5;&#x5BF9;&#x8C61;&#x3002;</li>
+<li>&#x4F18;&#x70B9;&#xFF1A; &#x5BF9;&#x8C61;&#x53EF;&#x4EE5;&#x5F88;&#x5FEB;&#x7684;&#x88AB;&#x56DE;&#x6536;&#xFF0C;&#x4E0D;&#x4F1A;&#x51FA;&#x73B0;&#x5185;&#x5B58;&#x8017;&#x5C3D;&#x6216;&#x8FBE;&#x5230;&#x67D0;&#x4E2A;&#x9608;&#x503C;&#x65F6;&#x624D;&#x56DE;&#x6536;</li>
+<li>&#x786E;&#x5B9A;&#xFF1A; &#x4E0D;&#x80FD;&#x5F88;&#x597D;&#x7684;&#x5904;&#x7406;&#x5FAA;&#x73AF;&#x5F15;&#x7528;&#xFF0C;&#x800C;&#x4E14;&#x5B9E;&#x65F6;&#x7EF4;&#x62A4;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#xFF0C;&#x6709;&#x4E00;&#x5B9A;&#x7684;&#x4EE3;&#x4EF7;&#x3002;</li>
+</ul>
+</li>
+<li>&#x6807;&#x8BB0;-&#x6E05;&#x9664;(golang)<ul>
+<li>&#x4ECE;&#x6839;&#x53D8;&#x91CF;&#x5F00;&#x59CB;&#x904D;&#x5386;&#x6240;&#x6709;&#x5F15;&#x7528;&#x7684;&#x5BF9;&#x8C61;&#xFF0C;&#x5F15;&#x7528;&#x7684;&#x5BF9;&#x8C61;&#x88AB;&#x6807;&#x8BB0;&#x4E3A;&#x201C;&#x88AB;&#x5F15;&#x7528;&#x201D;&#xFF0C;&#x6CA1;&#x6709;&#x88AB;&#x6807;&#x8BB0;&#x7684;&#x8FDB;&#x884C;&#x56DE;&#x6536;</li>
+<li>&#x4F18;&#x70B9;&#xFF1A; &#x89E3;&#x51B3;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x7684;&#x7F3A;&#x70B9;</li>
+<li>&#x7F3A;&#x70B9;&#xFF1A; &#x9700;&#x8981;STW.</li>
+</ul>
+</li>
+<li>&#x5206;&#x4EE3;&#x6536;&#x96C6;<ul>
+<li>&#x6309;&#x7167;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FDB;&#x884C;&#x5212;&#x5206;&#x4E0D;&#x540C;&#x7684;&#x4EE3;&#x7A7A;&#x95F4;&#xFF0C;&#x751F;&#x547D;&#x5468;&#x671F;&#x957F;&#x7684;&#x653E;&#x5165;&#x8001;&#x5E74;&#x4EE3;&#xFF0C;&#x77ED;&#x7684;&#x653E;&#x5165;&#x65B0;&#x751F;&#x4EE3;&#xFF0C;&#x65B0;&#x751F;&#x4EE3;&#x7684;&#x56DE;&#x6536;&#x9891;&#x7387;&#x9AD8;&#x4E8E;&#x8001;&#x5E74;&#x4EE3;&#x7684;&#x9891;&#x7387;&#x3002;</li>
+</ul>
+</li>
+</ul>
+<p>mspan&#x7ED3;&#x6784;&#xFF1A;</p>
+<p> <img src="../../img/golang/WX20220301-151605@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<p>span&#x7531;&#x591A;&#x4E2A;page&#x7EC4;&#x6210;&#x3002;&#x6BCF;&#x4E2A;span&#x6309;&#x7167;sizeclass&#x5207;&#x5206;&#x6210;&#x591A;&#x4E2A;&#x5757;&#x3002; &#x4E0B;&#x9762;&#x7684;&#x4F4D;&#x56FE;&#x5C31;&#x4EE3;&#x8868;&#x8FD9;&#x4E9B;&#x5185;&#x5B58;&#x5757;&#x7684;&#x5206;&#x914D;&#x60C5;&#x51B5;&#x3002;</p>
+<ul>
+<li>allocBits &#x8BB0;&#x5F55;&#x4E86;&#x6BCF;&#x5757;&#x5185;&#x5B58;&#x5206;&#x914D;&#x7684;&#x60C5;&#x51B5;</li>
+<li>gcmarkBits &#x8BB0;&#x5F55;&#x4E86;&#x6BCF;&#x5757;&#x5185;&#x5B58;&#x7684;&#x5F15;&#x7528;&#x60C5;&#x51B5;&#xFF0C;&#x6807;&#x8BB0;&#x9636;&#x6BB5;&#x5BF9;&#x6BCF;&#x5757;&#x5185;&#x5B58;&#x8FDB;&#x884C;&#x6807;&#x8BB0;&#xFF0C;&#x6709;&#x5BF9;&#x8C61;&#x5F15;&#x7528;&#x7684;&#x5185;&#x5B58;&#x6807;&#x8BB0;&#x4E3A;1&#xFF0C;&#x6CA1;&#x6709;&#x6807;&#x8BB0;&#x4E3A;0</li>
+<li>&#x8FD9;&#x4E24;&#x4E2A;&#x4F4D;&#x56FE;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x5B8C;&#x5168;&#x662F;&#x4E00;&#x81F4;&#x7684;&#xFF0C;&#x6807;&#x8BB0;&#x63A5;&#x6536;&#x5219;&#x8FDB;&#x884C;&#x5185;&#x5B58;&#x56DE;&#x6536;&#xFF0C;&#x4F1A;&#x540E;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5C06;alloBits&#x6307;&#x5411;gcmarkBits&#xFF0C;&#x6807;&#x8BB0;&#x8FC7;&#x7684;&#x5219;&#x5B58;&#x5728;&#xFF0C;&#x672A;&#x8FDB;&#x884C;&#x6807;&#x8BB0;&#x7684;&#x5219;&#x8FDB;&#x884C;&#x56DE;&#x6536;&#x3002;</li>
+</ul>
+<h2 id="gc&#x5DE5;&#x4F5C;&#x6D41;&#x7A0B;">GC&#x5DE5;&#x4F5C;&#x6D41;&#x7A0B;</h2>
+<p> Golang GC&#x7684;&#x5927;&#x90E8;&#x5206;&#x5904;&#x7406;&#x662F;&#x548C;&#x7528;&#x6237;&#x4EE3;&#x7801;&#x5E76;&#x884C;&#x7684;&#x3002;</p>
+<ul>
+<li>Mark:<ul>
+<li>Mark Prepare: &#x521D;&#x59CB;&#x5316;gc&#x4EFB;&#x52A1;&#xFF0C;&#x5305;&#x62EC;&#x5F00;&#x542F;&#x5199;&#x5C4F;&#x969C;&#x548C;&#x8F85;&#x52A9;GC,&#x7EDF;&#x8BA1;root&#x5BF9;&#x8C61;&#x7684;&#x4EFB;&#x52A1;&#x6570;&#x91CF;&#x7B49;&#x3002;&#x8FD9;&#x4E2A;&#x8FC7;&#x7A0B;&#x9700;&#x8981;STW.</li>
+<li>GCDrains:&#x626B;&#x63CF;&#x6240;&#x6709;root&#x5BF9;&#x8C61;&#xFF0C;&#x5305;&#x62EC;&#x5168;&#x5C40;&#x6307;&#x9488;&#x548C;goroutine(G)&#x6808;&#x4E0A;&#x7684;&#x6307;&#x9488;(&#x626B;&#x63CF;&#x5BF9;&#x5E94;G&#x6808;&#x65F6;&#x9700;&#x505C;&#x6B62;&#x8BE5;G)&#xFF0C;&#x5C06;&#x5176; &#x52A0;&#x5165;&#x6807;&#x8BB0;&#x961F;&#x5217;(&#x7070;&#x8272;&#x961F;&#x5217;)&#xFF0C;&#x5E76;&#x5FAA;&#x73AF;&#x5904;&#x7406;&#x7070;&#x8272;&#x961F;&#x5217;&#x7684;&#x5BF9;&#x8C61;&#xFF0C;&#x76F4;&#x5230;&#x7070;&#x8272;&#x961F;&#x5217;&#x4E3A;&#x7A7A;&#x3002;&#x8BE5;&#x8FC7;&#x7A0B;&#x540E;&#x53F0;&#x5E76;&#x884C;&#x6267;&#x884C;</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>MarkTermination:&#x5B8C;&#x6210;&#x6807;&#x8BB0;&#x5DE5;&#x4F5C;&#xFF0C;&#x91CD;&#x65B0;&#x626B;&#x63CF;(re-scan)&#x5168;&#x5C40;&#x6307;&#x9488;&#x548C;&#x6808;&#x3002;&#x56E0;&#x4E3A;Mark&#x548C;&#x7528;&#x6237;&#x7A0B;&#x5E8F;&#x662F;&#x5E76;&#x884C;&#x7684;&#xFF0C;&#x6240;&#x4EE5;&#x5728;Mark&#x8FC7; &#x7A0B;&#x4E2D;&#x53EF;&#x80FD;&#x4F1A;&#x6709;&#x65B0;&#x7684;&#x5BF9;&#x8C61;&#x5206;&#x914D;&#x548C;&#x6307;&#x9488;&#x8D4B;&#x503C;&#xFF0C;&#x8FD9;&#x4E2A;&#x65F6;&#x5019;&#x5C31;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x5199;&#x5C4F;&#x969C;(write barrier)&#x8BB0;&#x5F55;&#x4E0B;&#x6765;&#xFF0C;re-scan &#x518D;&#x68C0;&#x67E5;&#x4E00;&#x4E0B;&#xFF0C;&#x8FD9; &#x4E2A;&#x8FC7;&#x7A0B;&#x4E5F;&#x662F;&#x4F1A; STW &#x7684;</li>
+<li>Sweep:&#x6309;&#x7167;&#x6807;&#x8BB0;&#x7ED3;&#x679C;&#x56DE;&#x6536;&#x6240;&#x6709;&#x7684;&#x767D;&#x8272;&#x5BF9;&#x8C61;&#xFF0C;&#x8BE5;&#x8FC7;&#x7A0B;&#x540E;&#x53F0;&#x5E76;&#x884C;&#x6267;&#x884C;</li>
+<li>SweepTermination:&#x5BF9;&#x672A;&#x6E05;&#x626B;&#x7684;span&#x8FDB;&#x884C;&#x6E05;&#x626B;,&#x53EA;&#x6709;&#x4E0A;&#x4E00;&#x8F6E;&#x7684;GC&#x7684;&#x6E05;&#x626B;&#x5DE5;&#x4F5C;&#x5B8C;&#x6210;&#x624D;&#x53EF;&#x4EE5;&#x5F00;&#x59CB;&#x65B0;&#x4E00;&#x8F6E;&#x7684;GC</li>
+</ul>
+<h2 id="gc&#x5DE5;&#x4F5C;&#x6D41;&#x7A0B;">GC&#x5DE5;&#x4F5C;&#x6D41;&#x7A0B;</h2>
+<p> <img src="../../img/golang/WX20220301-153551@2x.png" alt="&#x8FDB;&#x7A0B;&#x521B;&#x5EFA;"></p>
+<h2 id="&#x4E09;&#x8272;&#x6807;&#x8BB0;">&#x4E09;&#x8272;&#x6807;&#x8BB0;</h2>
+<ul>
+<li>GC&#x5F00;&#x59CB;&#x65F6;&#xFF0C;&#x8BA4;&#x4E3A;&#x6240;&#x6709;object&#x90FD;&#x662F;&#x767D;&#x8272;&#xFF0C;&#x5373;&#x5783;&#x573E;</li>
+<li>&#x4ECE;root&#x533A;&#x5F00;&#x59CB;&#x904D;&#x5386;&#xFF0C;&#x88AB;&#x89E6;&#x8FBE;&#x7684;object&#x76F4;&#x4E3A;&#x7070;&#x8272;&#x3002;</li>
+<li>&#x904D;&#x5386;&#x6240;&#x6709;&#x7070;&#x8272;&#xFF0C;&#x5C06;&#x4ED6;&#x4EEC;&#x5185;&#x90E8;&#x7684;&#x5F15;&#x7528;&#x53D8;&#x91CF;&#x7F6E;&#x4E3A;&#x7070;&#x8272;&#xFF0C;&#x81EA;&#x8EAB;&#x4E3A;&#x9ED1;&#x8272;&#x3002;</li>
+<li>&#x5FAA;&#x73AF;&#x7B2C;&#x4E09;&#x6B65;&#xFF0C;&#x76F4;&#x5230;&#x6CA1;&#x6709;&#x7070;&#x8272;&#x7684;object&#xFF0C;&#x53EA;&#x5269;&#x4E0B;&#x9ED1;&#x767D;&#x4E24;&#x79CD;&#xFF0C;&#x767D;&#x8272;&#x7684;&#x662F;&#x5783;&#x573E;&#xFF0C;&#x9ED1;&#x8272;&#x7684;&#x4E3A;&#x6D3B;&#x8DC3;&#x5BF9;&#x8C61;&#x3002;</li>
+<li>&#x5BF9;&#x4E8E;&#x9ED1;&#x8272;&#x7684;object&#xFF0C;&#x5982;&#x679C;&#x5728;&#x6807;&#x8BB0;&#x671F;&#x95F4;&#x53D1;&#x751F;&#x4E86;&#x5199;&#x64CD;&#x4F5C;&#xFF0C;&#x5199;&#x5C4F;&#x969C;&#x4F1A;&#x5728;&#x771F;&#x6B63;&#x8D4B;&#x503C;&#x524D;&#x5C06;&#x65B0;&#x5BF9;&#x8C61;&#x6807;&#x8BB0;&#x4E3A;&#x7070;&#x8272;&#x3002;</li>
+<li>&#x6BD4;&#x8F83;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;mallocgc &#x65B0;&#x5206;&#x914D;&#x7684;object&#xFF0C;&#x4F1A;&#x5148;&#x88AB;&#x6807;&#x8BB0;&#x6210;&#x9ED1;&#x8272;&#xFF0C;&#x518D;&#x8FD4;&#x56DE;&#x3002;</li>
+</ul>
+<h2 id="&#x5783;&#x573E;&#x56DE;&#x6536;&#x89E6;&#x53D1;&#x673A;&#x5236;">&#x5783;&#x573E;&#x56DE;&#x6536;&#x89E6;&#x53D1;&#x673A;&#x5236;</h2>
+<ul>
+<li>&#x5185;&#x5B58;&#x5206;&#x914D;&#x91CF;&#x8FBE;&#x5230;&#x9608;&#x503C;&#x89E6;&#x53D1;GC <ul>
+<li>&#x6BCF;&#x6B21;&#x5185;&#x5B58;&#x5206;&#x914D;&#x65F6;&#x90FD;&#x4F1A;&#x68C0;&#x67E5;&#x5F53;&#x524D;&#x5185;&#x5B58;&#x5206;&#x914D;&#x91CF;&#x662F;&#x5426;&#x8FBE;&#x5230;&#x9608;&#x503C;&#x3002;&#x9608;&#x503C;=&#x4E0A;&#x6B21;gc&#x5185;&#x5B58;&#x5206;&#x914D;&#x91CF;*&#x5185;&#x5B58;&#x589E;&#x957F;&#x7387;&#x3002;</li>
+<li>&#x5185;&#x5B58;&#x589E;&#x957F;&#x7387;&#x7531;&#x53D8;&#x91CF;GOGC&#x63A7;&#x5236;&#x3002;&#x9ED8;&#x8BA4;&#x4E3A;100.&#x5373;&#x6BCF;&#x5F53;&#x5185;&#x5B58;&#x6269;&#x5927;&#x4E00;&#x500D;&#x65F6;&#xFF0C;&#x542F;&#x52A8;GC.</li>
+</ul>
+</li>
+<li><p>&#x5B9A;&#x671F;&#x89E6;&#x53D1;GC</p>
+<ul>
+<li>&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B; &#x6700;&#x957F;2&#x5206;&#x949F;&#x89E6;&#x53D1;&#x4E00;&#x6B21;&#x3002;&#x8FD9;&#x4E2A;&#x95F4;&#x9694;&#x5728; src/runtime/proc.go:forcegcperiod &#x53D8;&#x91CF;&#x4E2D;&#x88AB;&#x58F0;&#x660E;</li>
+</ul>
+</li>
+<li><p>&#x624B;&#x52A8;&#x89E6;&#x53D1;</p>
+<ul>
+<li>&#x7A0B;&#x5E8F;&#x4EE3;&#x7801;&#x4E2D;&#x4E5F;&#x53EF;&#x4EE5;&#x4F7F;&#x7528; runtime.GC()&#x6765;&#x624B;&#x52A8;&#x89E6;&#x53D1; GC&#x3002;&#x8FD9;&#x4E3B;&#x8981;&#x7528;&#x4E8E; GC &#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x548C;&#x7EDF;&#x8BA1;&#x3002;</li>
+</ul>
+</li>
+</ul>
+<footer class="page-footer"><span class="copyright">Copyright &#xA9; Du Yong  all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x8BE5;&#x6587;&#x4EF6;&#x4FEE;&#x8BA2;&#x65F6;&#x95F4;&#xFF1A;
+2022-03-02 01:10:05
+</span></footer>
+<script>console.log("plugin-popup....");document.onclick = function(e){ e.target.tagName === "IMG" && window.open(e.target.src,e.target.src)}</script><style>img{cursor:pointer}</style>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Golang协程调度机制.html" class="navigation navigation-prev " aria-label="Previous page: Go协程调度机制">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../lib/" class="navigation navigation-next " aria-label="Next page: Go语言三方库">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Go内存管理","level":"1.2.2.4","depth":3,"next":{"title":"Go语言三方库","level":"1.2.3","depth":2,"path":"golang/lib/README.md","ref":"golang/lib/README.md","articles":[{"title":"Test包","level":"1.2.3.1","depth":3,"path":"golang/lib/aa.md","ref":"golang/lib/aa.md","articles":[]},{"title":"命令行参数解析工具-pflag包","level":"1.2.3.2","depth":3,"path":"golang/lib/命令行参数解析工具Pflag.md","ref":"golang/lib/命令行参数解析工具Pflag.md","articles":[]},{"title":"配置文件解析工具-viper包","level":"1.2.3.3","depth":3,"path":"golang/lib/配置文件解析工具viper.md","ref":"golang/lib/配置文件解析工具viper.md","articles":[]},{"title":"命令行框架Cobra包","level":"1.2.3.4","depth":3,"path":"golang/lib/命令行框架Cobra.md","ref":"golang/lib/命令行框架Cobra.md","articles":[]}]},"previous":{"title":"Go协程调度机制","level":"1.2.2.3","depth":3,"path":"golang/kernel/Golang协程调度机制.md","ref":"golang/kernel/Golang协程调度机制.md","articles":[]},"dir":"ltr"},"config":{"plugins":["back-to-top-button","chapter-fold","expandable-chapters-small","-lunr","code","copy-code-button","-search","search-pro","advanced-emoji","github","splitter","page-toc-button","alerts","flexible-alerts","pageview-count","auto-scroll-table","popup","tbfed-pagefooter"],"styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy Du Yong ","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"github":{"url":"https://github.com"},"splitter":{},"search-pro":{},"auto-scroll-table":{},"popup":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"back-to-top-button":{},"pageview-count":{},"alerts":{},"expandable-chapters-small":{},"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"callout","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"copy-code-button":{},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"DuYong","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"DuYong Gitbook","links":{"sidebar":{"Github":"https://github.com/xiaodulala"}},"gitbook":"*","description":"dyong's gitbook"},"file":{"path":"golang/kernel/内存管理.md","mtime":"2022-03-02T01:10:05.890Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-02T01:10:53.037Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-back-to-top-button/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-chapter-fold/chapter-fold.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-expandable-chapters-small/expandable-chapters-small.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-code/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search-pro/jquery.mark.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search-pro/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-alerts/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-flexible-alerts/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-pageview-count/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-auto-scroll-table/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
