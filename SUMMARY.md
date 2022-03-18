@@ -23,3 +23,4 @@
   * [docker&docker-compose安装](software/docker&docker-compose安装.md)
   * [docker-compose启动应用](software/docker-compose安装软件.md)
   * [数据源实时同步中间件之canal和Maxwell](software/数据源实时同步中间件之canal和Maxwell.md)
+  * [数据库审计插件](software/数据库审计.md)
