@@ -24,3 +24,5 @@
   * [docker-compose启动应用](software/docker-compose安装软件.md)
   * [数据源实时同步中间件之canal和Maxwell](software/数据源实时同步中间件之canal和Maxwell.md)
   * [数据库审计插件](software/数据库审计.md)
+  * [cadence官方文档理解和翻译](software/cadence思想.md)
+  * [cadence个人理解](software/cadence理解.md)
