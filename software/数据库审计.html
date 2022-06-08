@@ -103,6 +103,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="cadence思想.html" />
+    
     
     <link rel="prev" href="数据源实时同步中间件之canal和Maxwell.html" />
     
@@ -485,6 +487,32 @@
             
         </li>
     
+        <li class="chapter " data-level="1.5.6" data-path="cadence思想.html">
+            
+                <a href="cadence思想.html">
+            
+                    
+                    cadence官方文档理解和翻译
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.7" data-path="cadence理解.html">
+            
+                <a href="cadence理解.html">
+            
+                    
+                    cadence个人理解
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -613,6 +641,52 @@
 </code></pre>
 </li>
 </ul>
+<h3 id="docker-&#x65B9;&#x5F0F;">docker &#x65B9;&#x5F0F;</h3>
+<ul>
+<li>docker &#x542F;&#x52A8;:</li>
+</ul>
+<pre><code class="lang-bash">docker run <span class="hljs-_">-d</span> --name mysql-audit -p 13306:3306 -v $(<span class="hljs-built_in">pwd</span>)/datadir:/opt/mysql/data -v $(<span class="hljs-built_in">pwd</span>)/conf/my.cnf:/etc/my.cnf harbor.sxidc.com/yfhub/mysql/audit:latest
+</code></pre>
+<ul>
+<li>docker-compose.yalm</li>
+</ul>
+<pre><code class="lang-bash">version: <span class="hljs-string">&apos;3&apos;</span>
+services:
+  dy_mysql:
+    restart: always
+    image: harbor.sxidc.com/yfhub/mysql/audit:latest
+    container_name: mysql-audit
+    volumes:
+      - ./datadir:/opt/mysql/data
+      - ./conf/my.cnf:/etc/my.cnf
+    ports:
+      - 23306:3306
+</code></pre>
+<ul>
+<li>&#x7B2C;&#x4E00;&#x6B21;&#x542F;&#x52A8;&#x4FEE;&#x6539;root&#x5BC6;&#x7801;</li>
+</ul>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x767B;&#x5F55;&#x5BB9;&#x5668;</span>
+docker <span class="hljs-built_in">exec</span> -it mysql-audit bash
+
+<span class="hljs-comment"># &#x67E5;&#x770B;&#x4E34;&#x65F6;&#x5BC6;&#x7801;</span>
+cat /var/<span class="hljs-built_in">log</span>/mysql/error.log | grep <span class="hljs-string">&quot;temporary password&quot;</span>
+2022-03-23T15:01:55.616902+08:00 1 [Note] A temporary password is generated <span class="hljs-keyword">for</span> root@localhost: pjee-7%9;Ksd
+
+<span class="hljs-comment"># &#x767B;&#x5F55;mysql</span>
+mysql -uroot -p
+
+<span class="hljs-comment"># &#x4FEE;&#x6539;root&#x5BC6;&#x7801;</span>
+alter user user() identified by <span class="hljs-string">&quot;duyong&quot;</span>;
+
+<span class="hljs-comment"># &#x67E5;&#x770B;&#x63D2;&#x4EF6;&#x7248;&#x672C;,&#x786E;&#x4FDD;&#x63D2;&#x4EF6;&#x5B89;&#x88C5;</span>
+show global status like <span class="hljs-string">&apos;AUDIT_version&apos;</span>;
+</code></pre>
+<ul>
+<li>&#x5BA1;&#x8BA1;&#x65E5;&#x5FD7;&#x76EE;&#x5F55;</li>
+<li><pre><code class="lang-bash">cat $(<span class="hljs-built_in">pwd</span>)/datadir/mysql-audit.json
+</code></pre>
+</li>
+</ul>
 <h1 id="mysql-sniffer">mysql-sniffer</h1>
 <p>&#x57FA;&#x4E8E;&#x6D41;&#x91CF;&#x7684;&#x6570;&#x636E;&#x5E93;&#x5BA1;&#x8BA1;&#xFF0C;&#x56E0;&#x4E3A;&#x5B83;&#x4E0D;&#x9700;&#x8981;&#x66F4;&#x6539;&#x7F51;&#x7EDC;&#x7ED3;&#x6784;&#xFF0C;&#x5E76;&#x4E14;&#x4E5F;&#x662F;&#x6700;&#x5173;&#x952E;&#x7684;&#x662F;&#xFF0C;&#x4E0D;&#x5F71;&#x54CD;&#x6570;&#x636E;&#x5E93;&#x670D;&#x52A1;&#x5668;&#x6027;&#x80FD;&#xFF0C;&#x4E0D;&#x7528;&#x82E6;&#x53E3;&#x5A46;&#x5FC3;&#x7684;&#x529D;&#x6570;&#x636E;&#x5E93;&#x7BA1;&#x7406;&#x5458;&#x5B89;&#x88C5;&#x76D1;&#x63A7;&#x8F6F;&#x4EF6;&#x3002;&#x5B83;&#x53EF;&#x4EE5;&#x6BD4;&#x8F83;&#x597D;&#x7684;&#x53D1;&#x73B0;&#x901A;&#x8FC7;Web&#x6F0F;&#x6D1E;&#x7684;&#x62D6;&#x5E93;&#x884C;&#x4E3A;&#xFF0C;&#x4EE5;&#x53CA;&#x57FA;&#x4E8E;&#x6570;&#x636E;&#x5E93;&#x901A;&#x8BAF;&#x534F;&#x8BAE;&#x7684;&#x6570;&#x636E;&#x5E93;&#x7BA1;&#x7406;&#x8FC7;&#x7A0B;&#x4E2D;&#x7684;&#x8FDD;&#x89C4;&#x884C;&#x4E3A;&#x3002;</p>
 <p>ySQL Sniffer&#x3002;MySQLSniffer&#x662F;&#x4E00;&#x4E2A;&#x57FA;&#x4E8E;MySQL&#x534F;&#x8BAE;&#x7684;&#x6293;&#x5305;&#x5DE5;&#x5177;&#xFF0C;&#x5B9E;&#x65F6;&#x6293;&#x53D6;&#x8BF7;&#x6C42;&#xFF0C;&#x5E76;&#x683C;&#x5F0F;&#x5316;&#x8F93;&#x51FA;&#x3002;&#x8F93;&#x51FA;&#x5185;&#x5BB9;&#x5305;&#x62EC;&#x8BBF;&#x95EE;&#x65F6;&#x95F4;&#x3001;&#x8BBF;&#x95EE;&#x7528;&#x6237;&#x3001;&#x6765;&#x6E90;IP&#x3001;&#x8BBF;&#x95EE; Database&#x3001;&#x547D;&#x4EE4;&#x8017;&#x65F6;&#x3001;&#x8FD4;&#x56DE;&#x6570;&#x636E;&#x884C;&#x6570;&#x3001;&#x6267;&#x884C;&#x8BED;&#x53E5;&#x7B49;&#x3002;</p>
@@ -631,8 +705,96 @@ sudo ./mysql-sniffer -i vethf5b5af3  -p 3306
 </code></pre>
 <p><img src="../img/software/WX20220318-160433.png" alt="aa"></p>
 <h1 id="postgresql&#x5BA1;&#x8BA1;&#x5DE5;&#x5177;">Postgresql&#x5BA1;&#x8BA1;&#x5DE5;&#x5177;</h1>
+<h1 id="&#x53C2;&#x8003;">&#x53C2;&#x8003;</h1>
+<p><a href="http://www.postgres.cn/news/viewone/1/309" target="_blank">http://www.postgres.cn/news/viewone/1/309</a></p>
+<h2 id="&#x4E8C;&#x8FDB;&#x5236;&#x5B89;&#x88C5;">&#x4E8C;&#x8FDB;&#x5236;&#x5B89;&#x88C5;</h2>
+<h3 id="&#x4F9D;&#x8D56;">&#x4F9D;&#x8D56;</h3>
+<pre><code class="lang-bash">apt-get install -y --no-install-recommends 
+apt install -y make gcc
+apt install -y make
+apt install -y postgresql-server-dev-14
+apt install -y libkrb5-dev
+</code></pre>
+<h3 id="&#x4E0B;&#x8F7D;&#x5B89;&#x88C5;">&#x4E0B;&#x8F7D;&#x5B89;&#x88C5;</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x4E0B;&#x8F7D;&#x6E90;&#x7801;</span>
+https://github.com/pgaudit/pgaudit/tree/1.6.2
+
+make install USE_PGXS=1
+</code></pre>
+<h3 id="&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x914D;&#x7F6E;">&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x914D;&#x7F6E;</h3>
+<pre><code class="lang-bash">vim /var/lib/postgresql/data/postgresql.conf
+shared_preload_libraries=pgaudit
+</code></pre>
+<h2 id="docker&#x65B9;&#x5F0F;">docker&#x65B9;&#x5F0F;</h2>
+<ul>
+<li>docker&#x65B9;&#x5F0F;</li>
+</ul>
+<pre><code class="lang-bash">docker run --name dy-pgsql <span class="hljs-_">-d</span> <span class="hljs-_">-e</span> POSTGRES_PASSWORD=duyong  harbor.sxidc.com/yfhub/postgres/audit
+</code></pre>
+<ul>
+<li>docker-compose</li>
+</ul>
+<pre><code class="lang-yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&apos;3.1&apos;</span>
+
+<span class="hljs-attr">services:</span>
+<span class="hljs-attr">  postgres:</span>
+<span class="hljs-attr">    container_name:</span> duyong_postgres
+<span class="hljs-attr">    image:</span> harbor.sxidc.com/yfhub/postgres/audit
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    environment:</span>
+<span class="hljs-attr">      POSTGRES_USER:</span> root
+<span class="hljs-attr">      POSTGRES_PASSWORD:</span> root
+<span class="hljs-attr">      POSTGRES_DB:</span> duyong
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-number">5432</span>:<span class="hljs-number">5432</span>
+<span class="hljs-attr">    volumes:</span>
+<span class="hljs-bullet">      -</span> ./data:/var/lib/postgresql/data
+<span class="hljs-attr">  pgadmin4:</span>
+<span class="hljs-attr">    container_name:</span> duyong_pgadmin4
+<span class="hljs-attr">    image:</span> dpage/pgadmin4
+<span class="hljs-attr">    restart:</span> always
+<span class="hljs-attr">    environment:</span>
+<span class="hljs-attr">      PGADMIN_DEFAULT_EMAIL:</span> admin@fskj.com
+<span class="hljs-attr">      PGADMIN_DEFAULT_PASSWORD:</span> <span class="hljs-number">123</span>
+<span class="hljs-attr">    ports:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-number">18080</span>:<span class="hljs-number">80</span>
+</code></pre>
+<ul>
+<li>&#x914D;&#x7F6E;</li>
+</ul>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x8FDB;&#x5165;&#x5BB9;&#x5668;</span>
+docker <span class="hljs-built_in">exec</span> -it duyong_postgres bash
+<span class="hljs-comment"># &#x5F00;&#x542F;</span>
+psql <span class="hljs-_">-d</span> duyong;
+create extension pgaudit;
+<span class="hljs-built_in">set</span> pgaudit.log = <span class="hljs-string">&apos;all, -misc&apos;</span>;
+</code></pre>
+<ul>
+<li>&#x6D4B;&#x8BD5;</li>
+</ul>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x5BB9;&#x5668;&#x5185;&#x6267;&#x884C;</span>
+
+select name,setting from pg_settings <span class="hljs-built_in">where</span> name like <span class="hljs-string">&apos;pgaudit%&apos;</span>;
+
+            name            |  setting
+----------------------------+------------
+ pgaudit.log                | all, -misc
+ pgaudit.log_catalog        | on
+ pgaudit.log_client         | off
+ pgaudit.log_level          | <span class="hljs-built_in">log</span>
+ pgaudit.log_parameter      | off
+ pgaudit.log_relation       | off
+ pgaudit.log_rows           | off
+ pgaudit.log_statement      | on
+ pgaudit.log_statement_once | off
+ pgaudit.role               |
+(10 rows)
+</code></pre>
+<ul>
+<li>&#x683C;&#x5F0F;&#x914D;&#x7F6E;</li>
+</ul>
 <footer class="page-footer"><span class="copyright">Copyright &#xA9; Du Yong  all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x8BE5;&#x6587;&#x4EF6;&#x4FEE;&#x8BA2;&#x65F6;&#x95F4;&#xFF1A;
-2022-03-18 08:45:05
+2022-06-08 10:24:43
 </span></footer>
 <script>console.log("plugin-popup....");document.onclick = function(e){ e.target.tagName === "IMG" && window.open(e.target.src,e.target.src)}</script><style>img{cursor:pointer}</style>
                                 
@@ -661,10 +823,14 @@ sudo ./mysql-sniffer -i vethf5b5af3  -p 3306
 
             
                 
-                <a href="数据源实时同步中间件之canal和Maxwell.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 数据源实时同步中间件之canal和Maxwell">
+                <a href="数据源实时同步中间件之canal和Maxwell.html" class="navigation navigation-prev " aria-label="Previous page: 数据源实时同步中间件之canal和Maxwell">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
+                
+                <a href="cadence思想.html" class="navigation navigation-next " aria-label="Next page: cadence官方文档理解和翻译">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -673,7 +839,7 @@ sudo ./mysql-sniffer -i vethf5b5af3  -p 3306
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"数据库审计插件","level":"1.5.5","depth":2,"previous":{"title":"数据源实时同步中间件之canal和Maxwell","level":"1.5.4","depth":2,"path":"software/数据源实时同步中间件之canal和Maxwell.md","ref":"software/数据源实时同步中间件之canal和Maxwell.md","articles":[]},"dir":"ltr"},"config":{"plugins":["back-to-top-button","chapter-fold","expandable-chapters-small","-lunr","code","copy-code-button","-search","search-pro","advanced-emoji","github","splitter","page-toc-button","alerts","flexible-alerts","pageview-count","auto-scroll-table","popup","tbfed-pagefooter"],"styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy Du Yong ","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"github":{"url":"https://github.com"},"splitter":{},"search-pro":{},"auto-scroll-table":{},"popup":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"back-to-top-button":{},"pageview-count":{},"alerts":{},"expandable-chapters-small":{},"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"callout","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"copy-code-button":{},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"DuYong","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"DuYong Gitbook","links":{"sidebar":{"Github":"https://github.com/xiaodulala"}},"gitbook":"*","description":"dyong's gitbook"},"file":{"path":"software/数据库审计.md","mtime":"2022-03-18T08:45:05.858Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-18T08:45:55.343Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"数据库审计插件","level":"1.5.5","depth":2,"next":{"title":"cadence官方文档理解和翻译","level":"1.5.6","depth":2,"path":"software/cadence思想.md","ref":"software/cadence思想.md","articles":[]},"previous":{"title":"数据源实时同步中间件之canal和Maxwell","level":"1.5.4","depth":2,"path":"software/数据源实时同步中间件之canal和Maxwell.md","ref":"software/数据源实时同步中间件之canal和Maxwell.md","articles":[]},"dir":"ltr"},"config":{"plugins":["back-to-top-button","chapter-fold","expandable-chapters-small","-lunr","code","copy-code-button","-search","search-pro","advanced-emoji","github","splitter","page-toc-button","alerts","flexible-alerts","pageview-count","auto-scroll-table","popup","tbfed-pagefooter"],"styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy Du Yong ","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"github":{"url":"https://github.com"},"splitter":{},"search-pro":{},"auto-scroll-table":{},"popup":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"back-to-top-button":{},"pageview-count":{},"alerts":{},"expandable-chapters-small":{},"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"callout","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"copy-code-button":{},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"DuYong","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"DuYong Gitbook","links":{"sidebar":{"Github":"https://github.com/xiaodulala"}},"gitbook":"*","description":"dyong's gitbook"},"file":{"path":"software/数据库审计.md","mtime":"2022-06-08T10:24:43.224Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-06-08T10:25:48.410Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

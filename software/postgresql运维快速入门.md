@@ -106,7 +106,7 @@ drop user admin;  # 删除用户
 alert user admin with password '1234' # 修改密码
 \du  查看用户
 ```
-
+	
 # 权限管理
 
 ## 权限级别
