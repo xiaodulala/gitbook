@@ -1,4 +1,3 @@
-[TOC]
 
 # Uber Cadenec 
 
@@ -29,3 +28,23 @@ cadence编程模型中有四个主要的角色,在介绍角色之前，需要说
 由于cadence场景很多。根据场景的不通。三种角色也可以被称为其他的名称
 
 ![](../img/software/WX20220608-181305@2x.png)
+
+
+# Cadence 微服务架构
+
+
+![](../img/software/WX20220609-103556@2x.png)
+
+
+* Matching Service   匹配服务，任务派遣Dispatching。他接收来自HistortService的活动或者是决策任务，存储在Task Storage中。他将任务派遣给这些Activity worker或者workflow worker
+* History Service,接收starter的启动工作流指令，然后调度决策或者是活动任务，下发给匹配服务去做任务派遣。他也接收来自Activity或者是workflow这些worker的执行响应。根据响应的结果在调度新的决策或者是活动任务。History service将工作流执行的任务步骤记录在工作流存储当做。也将工作流执行过程中发生的事件，记录在事件存储中。也将工作流的状态执行信息保存在Visbitil存储中。
+* Front End  类似于BFF服务。是一个门面服务。主要用来屏蔽内部的这些微服务的复杂性。外围的客户端服务只能通过Front End服务与Cadence内部服务交互。
+
+
+![](../img/software/WX20220609-135021@2x.png)
+
+
+
+![](../img/software/WX20220609-140208@2x.png)
+
+
