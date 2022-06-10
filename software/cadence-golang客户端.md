@@ -288,3 +288,528 @@ err := client.RecordActivityHeartbeat(taskToken, details)
 ## 错误活动
 
 要将一个活动标记为失败，活动函数必须通过错误返回值返回一个错误。
+
+
+# 执行活动
+
+ 工作流实现的主要职责是为执行安排活动。最直接的方法是通过库方法workflow.ExecuteActivity。下面的示例代码演示了如何进行这个调用:
+ 
+ ```yaml
+ ao := cadence.ActivityOptions{
+    TaskList:               "sampleTaskList",
+    ScheduleToCloseTimeout: time.Second * 60,
+    ScheduleToStartTimeout: time.Second * 60,
+    StartToCloseTimeout:    time.Second * 60,
+    HeartbeatTimeout:       time.Second * 10,
+    WaitForCancellation:    false,
+}
+ctx = cadence.WithActivityOptions(ctx, ao)
+
+future := workflow.ExecuteActivity(ctx, SimpleActivity, value)
+var result string
+if err := future.Get(ctx, &result); err != nil {
+    return err
+}
+ ```
+ 
+ 让我们看看这个调用的每个组件。
+ 
+## Activity options
+ 
+  在调用workflow.ExecuteActivity()之前，您必须为调用配置ActivityOptions。这些选项自定义各种执行超时，并通过从初始上下文创建子上下文并覆盖所需的值来传入。然后子上下文被传递到workflow.ExecuteActivity()调用。如果多个活动共享相同的选项值，那么在调用workflow.ExecuteActivity()时可以使用相同的上下文实例。 
+  
+## 活动超时
+
+可以有各种与活动相关联的超时。Cadence保证活动最多执行一次，所以一个活动成功或失败的超时时间如下:
+
+* StartToCloseTimeout   工作者接收任务后处理任务的最大时间
+* ScheduleToStartTimeout  在工作流调度任务之后，任务等待被活动工作者拾取的时间。如果在指定的时间内没有可用的worker来处理此任务，则该任务将超时。
+* ScheduleToCloseTimeout  在工作流安排任务之后，任务完成所需的时间。这通常大于StartToClose和ScheduleToStart超时的总和。
+* HeartbeatTimeout  如果任务在此期间没有心跳到Cadence服务，则将认为该任务失败。这对于长时间运行的任务很有用
+
+## ExecuteActivity call 
+
+调用中的第一个参数是所需的 cadence上下文对象。这种类型是上下文的副本。使用Done()方法返回cadence.Channel。频道而不是原生的Go chan。
+
+第二个参数是我们注册为活动函数的函数。此参数也可以是表示活动函数的完全限定名称的字符串。传入实际函数对象的好处是，框架可以验证活动参数。
+
+其余参数作为调用的一部分传递给活动。在我们的示例中，只有一个参数:value。此参数列表必须与活动函数声明的参数列表相匹配。Cadence客户端库将对此进行验证。
+
+该方法调用立即返回并返回一个cadence.Future。这允许您执行更多的代码，而不必等待计划的活动完成。
+
+当您准备处理活动的结果时，对返回的未来对象调用Get()方法。这个方法的参数是我们传递给workflow.ExecuteActivity()调用的ctx对象和一个将接收活动输出的输出参数。输出参数的类型必须与活动函数声明的返回值的类型匹配。Get()方法将阻塞，直到活动完成和结果可用。
+
+您可以从未来检索workflow.ExecuteActivity()返回的结果值，并像使用同步函数调用的任何正常结果一样使用它。下面的示例代码演示了如果结果是字符串值，如何使用该结果:
+
+
+```go
+var result string
+if err := future.Get(ctx1, &result); err != nil {
+    return err
+}
+
+switch result {
+case "apple":
+    // Do something.
+case "banana":
+    // Do something.
+default:
+    return err
+}
+```
+
+在这个例子中，我们在workflow.ExecuteActivity()之后立即对返回的future调用Get()方法。然而，这是不必要的。如果您希望并行执行多个活动，您可以重复调用workflow.ExecuteActivity()，存储返回的future，然后在稍后的时间通过调用future的Get()方法等待所有活动完成。
+
+要在返回的future对象上实现更复杂的等待条件，可以使用cadence.Selector类。
+
+# 子工作流
+
+允许从工作流的实现中调度其他工作流。父工作流能够监视和影响子工作流的生命周期，就像它对调用的活动所做的那样。
+
+```go
+cwo := workflow.ChildWorkflowOptions{
+    // Do not specify WorkflowID if you want Cadence to generate a unique ID for the child execution.
+    WorkflowID:                   "BID-SIMPLE-CHILD-WORKFLOW",
+    ExecutionStartToCloseTimeout: time.Minute * 30,
+}
+ctx = workflow.WithChildWorkflowOptions(ctx, cwo)
+
+var result string
+future := workflow.ExecuteChildWorkflow(ctx, SimpleChildWorkflow, value)
+if err := future.Get(ctx, &result); err != nil {
+    workflow.GetLogger(ctx).Error("SimpleChildWorkflow failed.", zap.Error(err))
+    return err
+}
+```
+在调用workflow.ExecuteChildworkflow()之前，必须为调用配置ChildWorkflowOptions。这些选项自定义各种执行超时，并通过从初始上下文创建子上下文并覆盖所需的值来传入。然后子上下文被传递到workflow.ExecuteChildWorkflow()调用中。如果多个子工作流共享相同的选项值，那么调用workflow.ExecuteChildworkflow()时可以使用相同的上下文实例。
+
+
+调用中的第一个参数是所需的cadence.Context对象。这种类型是上下文的副本。使用Done()方法返回节奏。频道而不是原生的Go chan。
+
+
+第二个参数是我们注册为工作流函数的函数。该参数也可以是表示工作流函数的完全限定名称的字符串。这样做的好处是，当您传入实际的函数对象时，框架可以验证工作流参数。  其余参数作为调用的一部分传递给工作流。在我们的示例中，只有一个参数:value。此参数列表必须与工作流函数声明的参数列表相匹配。
+
+该方法调用立即返回并返回一个cadence.Future。这允许您执行更多的代码，而不必等待计划的工作流完成。
+
+
+当您准备处理工作流的结果时，对返回的future对象调用Get()方法。这个方法的参数是我们传递给workflow. executechildworkflow()调用的ctx对象和一个将接收工作流输出的输出参数。输出参数的类型必须与工作流函数声明的返回值的类型匹配。Get()方法将阻塞，直到工作流完成和结果可用。
+
+workflow.ExecuteChildWorkflow()函数类似于workflow.ExecuteActivity()。使用workflow.ExecuteActivity()所描述的所有模式也适用于workflow.ExecuteChildWorkflow()函数
+
+当用户取消父工作流时，子工作流可以根据可配置的子策略取消或放弃。
+
+# Activity and workflow retries
+
+活动和工作流可能会由于各种中间条件而失败。在这种情况下，我们希望重试失败的活动或子工作流，甚至父工作流。这可以通过提供一个可选的重试策略来实现。重试策略如下所示
+
+```go
+// RetryPolicy defines the retry policy.
+RetryPolicy struct {
+    // Backoff interval for the first retry. If coefficient is 1.0 then it is used for all retries.
+    // Required, no default value.
+    InitialInterval time.Duration
+
+    // Coefficient used to calculate the next retry backoff interval.
+    // The next retry interval is previous interval multiplied by this coefficient.
+    // Must be 1 or larger. Default is 2.0.
+    BackoffCoefficient float64
+
+    // Maximum backoff interval between retries. Exponential backoff leads to interval increase.
+    // This value is the cap of the interval. Default is 100x of initial interval.
+    MaximumInterval time.Duration
+
+    // Maximum time to retry. Either ExpirationInterval or MaximumAttempts is required.
+    // When exceeded the retries stop even if maximum retries is not reached yet.
+    // First (non-retry) attempt is unaffected by this field and is guaranteed to run 
+    // for the entirety of the workflow timeout duration (ExecutionStartToCloseTimeoutSeconds).
+    ExpirationInterval time.Duration
+
+    // Maximum number of attempts. When exceeded the retries stop even if not expired yet.
+    // If not set or set to 0, it means unlimited, and relies on ExpirationInterval to stop.
+    // Either MaximumAttempts or ExpirationInterval is required.
+    MaximumAttempts int32
+
+    // Non-Retriable errors. This is optional. Cadence server will stop retry if error reason matches this list.
+    // Error reason for custom error is specified when your activity/workflow returns cadence.NewCustomError(reason).
+    // Error reason for panic error is "cadenceInternal:Panic".
+    // Error reason for any other error is "cadenceInternal:Generic".
+    // Error reason for timeouts is: "cadenceInternal:Timeout TIMEOUT_TYPE". TIMEOUT_TYPE could be START_TO_CLOSE or HEARTBEAT.
+    // Note that cancellation is not a failure, so it won't be retried.
+    NonRetriableErrorReasons []string
+}
+```
+
+要启用重试，在执行ActivityOptions或ChildWorkflowOptions时提供一个自定义的重试策略。
+
+```go
+expiration := time.Minute * 10
+retryPolicy := &cadence.RetryPolicy{
+    InitialInterval:    time.Second,
+    BackoffCoefficient: 2,
+    MaximumInterval:    expiration,
+    ExpirationInterval: time.Minute * 10,
+    MaximumAttempts:    5,
+}
+ao := workflow.ActivityOptions{
+    ScheduleToStartTimeout: expiration,
+    StartToCloseTimeout:    expiration,
+    HeartbeatTimeout:       time.Second * 30,
+    RetryPolicy:            retryPolicy, // Enable retry.
+}
+ctx = workflow.WithActivityOptions(ctx, ao)
+activityFuture := workflow.ExecuteActivity(ctx, SampleActivity, params)
+```
+
+如果活动在失败前检测它的进度，重试尝试将包含该进度，因此活动实现可以从失败的进度中恢复，如下所示:
+
+```go
+func SampleActivity(ctx context.Context, inputArg InputParams) error {
+    startIdx := inputArg.StartIndex
+    if activity.HasHeartbeatDetails(ctx) {
+        // Recover from finished progress.
+        var finishedIndex int
+        if err := activity.GetHeartbeatDetails(ctx, &finishedIndex); err == nil {
+            startIdx = finishedIndex + 1 // Start from next one.
+        }
+    }
+
+    // Normal activity logic...
+    for i:=startIdx; i<inputArg.EndIdx; i++ {
+        // Code for processing item i goes here...
+        activity.RecordHeartbeat(ctx, i) // Report progress.
+    }
+}
+```
+与活动的重试一样，您需要为ChildWorkflowOptions提供一个重试策略，以启用子工作流的重试。要为父工作流启用重试，请在通过StartWorkflowOptions启动工作流时提供重试策略。
+
+ 当使用RetryPolicy时，工作流的历史事件会有一些微妙的变化。对于带有RetryPolicy的活动:
+ 
+ * ActivityTaskScheduledEvent将扩展ScheduleToStartTimeout和ScheduleToCloseTimeout。这两个超时将被服务器覆盖，其长度与重试策略的ExpirationInterval相同。如果没有指定ExpirationInterval，它将被覆盖到工作流的超时时间。
+* ActivityTaskStartedEvent将不会显示在历史中，直到活动完成或失败，没有更多的重试。这是为了避免记录ActivityTaskStarted事件，但后来它失败并重试。使用DescribeWorkflowExecution API将返回PendingActivityInfo，如果它正在重试，它将包含attemptCount。
+
+对于带有RetryPolicy的工作流:
+
+* 如果工作流失败并需要重试，则工作流执行将使用ContinueAsNew事件关闭。该事件将ContinueAsNewInitiator设置为RetryPolicy，并为下一次重试尝试设置新的RunID。
+* 新的尝试将立即创建。但是第一个决策任务将不会被调度，直到后退持续时间也被记录在新运行的WorkflowExecutionStartedEventAttributes事件中，作为firstDecisionTaskBackoffSeconds。
+
+# 错误处理
+
+活动或子工作流可能会失败，您可以根据不同的错误情况以不同的方式处理错误。如果活动返回error . new()或fmt.Errorf()，这些错误将被转换为workflow.GenericError。如果活动返回一个错误为cadence。NewCustomError(" err-reason "， details)，该错误将被转换为*cadence.CustomError。还有其他类型的错误，比如工作流错误。TimeoutError,工作流。CanceledError workflow.PanicError。下面是一个错误代码的示例:
+
+```go
+err := workflow.ExecuteActivity(ctx, YourActivityFunc).Get(ctx, nil)
+switch err := err.(type) {
+    case *cadence.CustomError:
+        switch err.Reason() {
+            case "err-reason-a":
+                // Handle error-reason-a.
+                var details YourErrorDetailsType
+                err.Details(&details)
+                // Deal with details.
+            case "err-reason-b":
+                // Handle error-reason-b.
+            default:
+                // Handle all other error reasons.
+        }
+    case *workflow.GenericError:
+        switch err.Error() {
+            case "err-msg-1":
+                // Handle error with message "err-msg-1".
+            case "err-msg-2":
+                // Handle error with message "err-msg-2".
+            default:
+                // Handle all other generic errors.
+        }
+    case *workflow.TimeoutError:
+        switch err.TimeoutType() {
+            case shared.TimeoutTypeScheduleToStart:
+                // Handle ScheduleToStart timeout.
+            case shared.TimeoutTypeStartToClose:
+                // Handle StartToClose timeout.
+            case shared.TimeoutTypeHeartbeat:
+                // Handle heartbeat timeout.
+            default:
+        }
+    case *workflow.PanicError:
+        // Handle panic error.
+    case *cadence.CanceledError:
+        // Handle canceled error.
+    default:
+        // All other cases (ideally, this should not happen).
+}
+```
+
+# 信号
+
+信号提供了一种直接向运行中的工作流发送数据的机制。在此之前，您有两个向工作流实现传递数据的选项:
+
+* 通过启动参数
+* 作为活动的返回值
+
+ 使用开始参数，我们只能在工作流执行开始之前传入值。
+ 
+ 活动的返回值允许我们将信息传递给正在运行的工作流，但是这种方法有其自身的复杂性。一个主要缺点是对投票的依赖。这意味着数据需要存储在第三方位置，直到它可以被活动拾取为止。此外，该活动的生命周期需要管理，如果在获取数据之前失败，则需要手动重新启动该活动。
+ 
+ 另一方面，信号提供了一种完全异步和持久的机制，用于向运行中的工作流提供数据。当接收到运行中的工作流的信号时，Cadence将事件和负载保存在工作流历史记录中。工作流可以在之后的任何时间处理信号，而不会有丢失信息的风险。工作流还可以通过阻塞信号通道来停止执行。
+ 
+ 
+```go
+ var signalVal string
+signalChan := workflow.GetSignalChannel(ctx, signalName)
+
+s := workflow.NewSelector(ctx)
+s.AddReceive(signalChan, func(c workflow.Channel, more bool) {
+    c.Receive(ctx, &signalVal)
+    workflow.GetLogger(ctx).Info("Received signal!", zap.String("signal", signalName), zap.String("value", signalVal))
+})
+s.Select(ctx)
+
+if len(signalVal) > 0 && signalVal != "SOME_VALUE" {
+    return errors.New("signalVal")
+}
+
+```
+ 
+
+In the example above, the workflow code uses workflow.GetSignalChannel to open a workflow.Channel for the named signal. We then use a workflow.Selector to wait on this channel and process the payload received with the signal.
+
+
+您可能不知道工作流是否正在运行并可以接受信号。客户端。SignalWithStartWorkflow(打开新窗口)API允许你向当前工作流实例发送信号，如果当前工作流实例存在，或者创建一个新的运行，然后发送信号。因此SignalWithStartWorkflow不接受运行ID作为参数。
+
+# Continue as new
+
+需要定期重新运行的工作流可以天真地实现为一个大的for循环，其中工作流的整个逻辑都在for循环的主体内。这种方法的问题是，该工作流的历史记录将不断增长，达到服务强制的最大大小。
+
+ContinueAsNew是一个低层次的构造，它能够实现这样的工作流，而不会有失败的风险。该操作以原子的方式完成当前的执行，并以相同的工作流ID开始新的工作流执行。新的执行不会从旧的执行中继承任何历史记录。为了触发这种行为，工作流函数应该通过返回特殊的ContinueAsNewError错误来终止:
+
+
+```go
+func SimpleWorkflow(workflow.Context ctx, value string) error {
+    ...
+    return workflow.NewContinueAsNewError(ctx, SimpleWorkflow, value)
+}
+```
+
+# side effect
+
+工作流。SideEffect对于简短的、不确定的代码片段非常有用，例如获取随机值或生成UUID。它执行一次所提供的功能，并将其结果记录到工作流历史中。工作流。在重播时，SideEffect不会重新执行，而是返回记录的结果。它可以被视为“内联”活动。关于工作流需要注意的一点。副作用是，不像Cadence保证活动最多执行一次，workflow.SideEffect没有这样的保证。在一定的故障条件下，工作流程。SideEffect最终可能会执行
+
+使副作用失效的唯一方法是恐慌，这会导致决策任务失败。在超时后，Cadence重新安排并重新执行决策任务，给了SideEffect另一个成功的机会。不要从SideEffect返回任何数据，除了通过它记录的返回值。
+
+```go
+encodedRandom := SideEffect(func(ctx cadence.Context) interface{} {
+    return rand.Intn(100)
+})
+
+var random int
+encodedRandom.Get(&random)
+if random < 50 {
+    ...
+} else {
+    ...
+}
+```
+
+# 查询
+
+如果工作流执行停留在某个状态的时间超过预期时间，您可能需要查询当前调用堆栈。可以通过Cadence CLI执行查询。例如:
+
+`cadence-cli --domain samples-domain workflow query -w my_workflow_id -r my_run_id -qt __stack_trace`
+
+该命令使用__stack_trace，它是Cadence客户端库支持的内置查询类型。您可以添加自定义查询类型来处理查询，例如查询工作流的当前状态，或者查询工作流已经完成了多少活动。为此，您需要使用workflow.SetQueryHandler设置一个查询处理程序。
+
+处理函数必须是一个返回两个值的函数:
+
+* A serializable result
+* An error
+
+处理程序函数可以接收任意数量的输入参数，但所有输入参数必须是可序列化的。下面的示例代码设置了一个查询处理程序，用于处理查询类型current_state:
+
+```go
+func MyWorkflow(ctx workflow.Context, input string) error {
+    currentState := "started" // This could be any serializable struct.
+    err := workflow.SetQueryHandler(ctx, "current_state", func() (string, error) {
+        return currentState, nil
+    })
+    if err != nil {
+        currentState = "failed to register query handler"
+        return err
+    }
+    // Your normal workflow code begins here, and you update the currentState as the code makes progress.
+    currentState = "waiting timer"
+    err = NewTimer(ctx, time.Hour).Get(ctx, nil)
+    if err != nil {
+        currentState = "timer failed"
+        return err
+    }
+
+    currentState = "waiting activity"
+    ctx = WithActivityOptions(ctx, myActivityOptions)
+    err = ExecuteActivity(ctx, MyActivity, "my_input").Get(ctx, nil)
+    if err != nil {
+        currentState = "activity failed"
+        return err
+    }
+    currentState = "done"
+    return nil
+}
+```
+
+You can now query current_state by using the CLI
+
+`cadence-cli --domain samples-domain workflow query -w my_workflow_id -r my_run_id -qt current_state`
+
+ 您还可以使用在Cadence客户端对象上的QueryWorkflow() API从代码中发出查询。
+ 
+ ## 一致性查询
+ 
+ 查询有两个一致性级别，最终一致性和强一致性。考虑一下，如果您要对工作流发出信号，然后立即查询该工作流
+ 
+ `cadence-cli --domain samples-domain workflow signal -w my_workflow_id -r my_run_id -n signal_name -if ./input.json`
+ 
+ `cadence-cli --domain samples-domain workflow query -w my_workflow_id -r my_run_id -qt current_state`
+ 
+  在本例中，如果信号要更改工作流状态，查询可能会也可能不会看到查询结果中反映的状态更新,这就是查询最终保持一致的含义。
+  
+  查询有另一个一致性级别，称为强一致性。强一致性的查询保证基于工作流状态，其中包括发出查询之前的所有事件。如果创建外部事件的调用在发出查询之前成功返回，则认为事件出现在查询之前。查询未完成时创建的外部事件可能反映在查询结果所基于的工作流状态中，也可能不反映。
+
+为了在CLI中运行一致性查询，请执行以下操作:
+
+`cadence-cli --domain samples-domain workflow query -w my_workflow_id -r my_run_id -qt current_state --qcl strong`
+
+为了使用go客户端运行查询，请执行以下操作:
+
+```go
+resp, err := cadenceClient.QueryWorkflowWithOptions(ctx, &client.QueryWorkflowWithOptionsRequest{
+    WorkflowID:            workflowID,
+    RunID:                 runID,
+    QueryType:             queryType,
+    QueryConsistencyLevel: shared.QueryConsistencyLevelStrong.Ptr(),
+})
+```
+
+当使用强一致的查询时，您应该期望比最终一致的查询更高的延迟。
+
+
+# 异步活动完成
+
+在某些情况下，在完成一个活动的功能后再完成它是不可能的或不可取的。例如，您可能有一个需要用户输入才能完成活动的应用程序。您可以使用轮询机制来实现活动，但更简单且更少资源密集型的实现是异步完成一个Cadence活动。
+
+实现异步完成的活动有两个部分:
+
+* 活动从外部系统提供完成所需的信息，并通知Cadence服务它正在等待外部回调。
+* 外部服务调用Cadence服务来完成活动。
+
+下面的例子演示了第一部分:
+
+
+```go
+// Retrieve the activity information needed to asynchronously complete the activity.
+activityInfo := cadence.GetActivityInfo(ctx)
+taskToken := activityInfo.TaskToken
+
+// Send the taskToken to the external service that will complete the activity.
+...
+
+// Return from the activity a function indicating that Cadence should wait for an async completion
+// message.
+return "", activity.ErrResultPending
+```
+
+下面的代码演示了如何成功完成该活动:
+
+```go
+// Instantiate a Cadence service client.
+// The same client can be used to complete or fail any number of activities.
+cadence.Client client = cadence.NewClient(...)
+
+// Complete the activity.
+client.CompleteActivity(taskToken, result, nil)
+```
+
+要让活动失败，你需要做以下操作
+
+```go
+// Fail the activity.
+client.CompleteActivity(taskToken, nil, err)
+```
+
+下面是CompleteActivity函数的参数:
+
+* taskToken:在活动内部检索到的ActivityInfo结构体的二进制taskToken字段的值。
+* result:活动记录的返回值。这个值的类型必须与活动函数声明的返回值的类型匹配。
+* err:如果活动因错误而终止，返回的错误代码。
+
+如果error不为空，则忽略result字段的值.
+
+# 测试
+
+Cadence Go客户端库提供了一个测试框架来促进测试工作流的实现。该框架适合于实现工作流逻辑的单元测试和功能测试。
+
+下面的代码实现了SimpleWorkflow示例的单元测试:
+
+```go
+package sample
+
+import (
+    "errors"
+    "testing"
+
+    "github.com/stretchr/testify/mock"
+    "github.com/stretchr/testify/suite"
+
+    "go.uber.org/cadence"
+    "go.uber.org/cadence/testsuite"
+)
+
+type UnitTestSuite struct {
+    suite.Suite
+    testsuite.WorkflowTestSuite
+
+    env *testsuite.TestWorkflowEnvironment
+}
+
+func (s *UnitTestSuite) SetupTest() {
+    s.env = s.NewTestWorkflowEnvironment()
+}
+
+func (s *UnitTestSuite) AfterTest(suiteName, testName string) {
+    s.env.AssertExpectations(s.T())
+}
+
+func (s *UnitTestSuite) Test_SimpleWorkflow_Success() {
+    s.env.ExecuteWorkflow(SimpleWorkflow, "test_success")
+
+    s.True(s.env.IsWorkflowCompleted())
+    s.NoError(s.env.GetWorkflowError())
+}
+
+func (s *UnitTestSuite) Test_SimpleWorkflow_ActivityParamCorrect() {
+    s.env.OnActivity(SimpleActivity, mock.Anything, mock.Anything).Return(
+        func(ctx context.Context, value string) (string, error) {
+            s.Equal("test_success", value)
+            return value, nil
+        }
+    )
+    s.env.ExecuteWorkflow(SimpleWorkflow, "test_success")
+
+    s.True(s.env.IsWorkflowCompleted())
+    s.NoError(s.env.GetWorkflowError())
+}
+
+func (s *UnitTestSuite) Test_SimpleWorkflow_ActivityFails() {
+    s.env.OnActivity(SimpleActivity, mock.Anything, mock.Anything).Return(
+        "", errors.New("SimpleActivityFailure"))
+    s.env.ExecuteWorkflow(SimpleWorkflow, "test_failure")
+
+    s.True(s.env.IsWorkflowCompleted())
+
+    s.NotNil(s.env.GetWorkflowError())
+    s.True(cadence.IsGenericError(s.env.GetWorkflowError()))
+    s.Equal("SimpleActivityFailure", s.env.GetWorkflowError().Error())
+}
+
+func TestUnitTestSuite(t *testing.T) {
+    suite.Run(t, new(UnitTestSuite))
+}
+```
