@@ -27,3 +27,4 @@
   * [cadence官方文档翻译](software/cadence思想.md)
   * [cadence理解](software/cadence理解.md)
   * [cadence-golang客户端](software/cadence-golang客户端.md)
+  * [dapr离线安装](software/dapr单机离线安装.md)
