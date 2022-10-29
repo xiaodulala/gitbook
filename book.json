@@ -37,6 +37,7 @@
         "back-to-top-button",
         "chapter-fold",
         "expandable-chapters-small",
+        "expandable-chapters",
         "-lunr", 
 		"code",
         "copy-code-button",
