@@ -63,6 +63,18 @@ gitbook也是一个基于node.js的命令行工具。gitbook工具允许我们�
 ## 安装
 
 ```bash
+
+# 先安装nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+# gitbool需要使用10版本
+nvm install 10
+nvm use 10
+
+# 替换一下镜像源
+npm config set registry https://registry.npmmirror.com
+npm config get registry
+
 npm install -g gitbook-cli
 
 gitbook -V 
