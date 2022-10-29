@@ -37,7 +37,6 @@
         "back-to-top-button",
         "chapter-fold",
         "expandable-chapters-small",
-        "expandable-chapters",
         "-lunr", 
 		"code",
         "copy-code-button",
@@ -52,7 +51,8 @@
         "pageview-count",
         "auto-scroll-table",
         "popup",
-        "tbfed-pagefooter"
+        "tbfed-pagefooter",
+        "toggle-chapters"
     
     ],
     "pluginsConfig": {
