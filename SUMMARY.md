@@ -10,6 +10,7 @@
 * [区块链](区块链/README.md)
 * [工具货架](工具货架/README.md)
 * [三方应用](三方应用/README.md)
+* [小文章](小文章/README.md)
 * [安装文档(4)](安装文档/README.md)
     * [GitBook搭建并且关联到GitHub Pages](安装文档/GitBook搭建并且关联到GitHub.md)
     * [docker&docker-compose安装](安装文档/docker&docker-compose安装.md)
