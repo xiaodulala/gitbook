@@ -32,10 +32,13 @@ tar xzvf harbor-offline-installer-v2.10.0.tgz
 
 ```bash
 # 创建证书目录
-cd /home/duyong/env/harbor/ssl
+cd /home/duyong/env/harbor
+mkdir ssl
 
 # 生成根证书私钥
-openssl genrsa -out ca.key 4096 
+cd ssl
+mkdir root
+openssl genrsa -out ./root/ca.key 4096 
 # 生成根证书证书  
 
 /C= Country 国家
@@ -84,6 +87,8 @@ openssl x509 -req -sha512 -days 3650 \
     -out ./harbor.tyduyong.com/harbor.tyduyong.com.crt
 
 # 将服务器证书和密钥复制到Harbor主机上的证书文件夹中
+cd ..
+mkdir -p ./data/cert
 cp ssl/harbor.tyduyong.com/harbor.tyduyong.com.crt ./data/cert
 cp ssl/harbor.tyduyong.com/harbor.tyduyong.com.key ./data/cert
 
@@ -91,11 +96,13 @@ cp ssl/harbor.tyduyong.com/harbor.tyduyong.com.key ./data/cert
 openssl x509 -inform PEM -in ./data/cert/harbor.tyduyong.com.crt -out ./data/cert/harbor.tyduyong.com.cert
 
 # 将服务器证书、密钥和CA文件复制到Harbor主机的Docker证书文件夹中。您必须首先创建适当的文件夹。
+sudo mkdir -p /etc/docker/certs.d/harbor.tyduyong.com/
 sudo cp data/cert/harbor.tyduyong.com.cert /etc/docker/certs.d/harbor.tyduyong.com/
 sudo cp data/cert/harbor.tyduyong.com.key   /etc/docker/certs.d/harbor.tyduyong.com/
 sudo cp ssl/root/ca.crt /etc/docker/certs.d/harbor.tyduyong.com/
 
 # 重启docker
+sudo systemctl restart docker
 
 ```
 
@@ -128,7 +135,8 @@ https:
 ```bash
 # 如果是离线形式安装，先导入镜像包
 docker load -i harbor.v2.10.0.tar.gz
-
+sudo ./prepare
+sudo ./install.sh
 ```
 
 
