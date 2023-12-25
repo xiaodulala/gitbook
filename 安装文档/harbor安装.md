@@ -140,3 +140,23 @@ sudo ./install.sh
 ```
 
 
+# 上传镜像到私有仓库
+
+```bash
+
+# 在运行Docker守护进程的机器上，检查/etc/docker/daemon.确保没有为https://yourdomain.com设置 insecure-registry选项。
+docker login harbor.tyduyong.com
+
+# harbor新建一个项目test
+
+# 随便拉取一个镜像
+docker pull busybox
+
+# 给这个镜像更换标签
+docker tag busybox:latest harbor.tyduyong.com/test/busybox:latest
+# 推送
+docker push harbor.tyduyong.com/test/busybox
+
+
+```
+
