@@ -16,3 +16,5 @@
     * [docker&docker-compose安装](安装文档/docker&docker-compose安装.md)
     * [docker-compose启动应用](安装文档/docker-compose安装软件.md)
     * [dapr离线安装](安装文档/dapr单机离线安装.md)
+    * [kebernetes本地最小化安装](安装文档/kubernetes本地最小安装.md)
+    * [kubeadm极速部署生产级kubernetes(v1.29)](安装文档/kubeadm极速部署生产级kubernetes(v1.29).md)
