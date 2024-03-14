@@ -296,14 +296,14 @@ docker save -o k8s-1-29-2.tar $image_list
 
 ```bash
 # 初始化集群
-sudo kubeadm  init --kubernetes-version=v1.29.2  --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.104 --cri-socket unix:///var/run/cri-dockerd.sock
+sudo kubeadm  init --kubernetes-version=v1.29.2  --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.56.3 --cri-socket unix:///var/run/cri-dockerd.sock
 # 设置配置
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # 添加工作节点
-sudo kubeadm join 10.0.0.104:6443 --token wo8xsg.i1b5pc65t1babl2f \
+sudo kubeadm join 192.168.56.3:6443 --token wo8xsg.i1b5pc65t1babl2f \
         --discovery-token-ca-cert-hash sha256:4366def480864026db4ef451e08370416cc69a115bfa57762e997a6bc60b59dd  --cri-socket unix:///var/run/cri-dockerd.sock
 
 ```
