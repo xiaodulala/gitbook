@@ -6,7 +6,9 @@
 
 [安装文档](https://goharbor.io/docs/2.10.0/install-config/)
 
-# 安装步骤
+## 自签名证书安装
+
+## 安装步骤
 
 1.  [确认目标服务器满足harbor安装的先决条件](https://goharbor.io/docs/2.10.0/install-config/installation-prereqs/)
 2. [下载安装包](https://goharbor.io/docs/2.10.0/install-config/download-installer/)
@@ -16,7 +18,7 @@
 6. [脚本启动](https://goharbor.io/docs/2.10.0/install-config/run-installer-script/)
 
 
-# 离线包方式安装
+## 离线包方式安装
 
 *  下载离线安装包
 
@@ -140,7 +142,7 @@ sudo ./install.sh
 ```
 
 
-# 上传镜像到私有仓库
+## 上传镜像到私有仓库
 
 ```bash
 
@@ -158,5 +160,56 @@ docker tag busybox:latest harbor.tyduyong.com/test/busybox:latest
 docker push harbor.tyduyong.com/test/busybox
 
 
+```
+
+
+
+# nginx代理并使用颁发证书
+
+## harbor配置
+
+```yaml
+hostname: 172.22.187.175
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 10010
+
+# https related config
+#https:
+  # https port for harbor, default is 443
+  #port: 10443
+  # The path of cert and key files for nginx
+  #certificate: /etc/nginx/conf.d/cert/harbor/harbor.tyduyong.com_cert_chain.pem
+  #private_key: /etc/nginx/conf.d/cert/harbor/harbor.tyduyong.com_key.key
+# Uncomment external_url if you want to enable external proxy
+# And when it enabled the hostname will no longer used
+external_url: https://harbor.tyduyong.com
+```
+
+1. 关闭harbor的https配置。ngxin代理上开启https。代理转发使用http.
+2. 一定要配置external_url参数，否则docker login 登录不了。
+
+## nginx配置
+
+```conf
+server {
+    listen 443 ssl;
+    server_name harbor.tyduyong.com;
+
+    ssl_certificate /etc/nginx/conf.d/cert/harbor/harbor.tyduyong.com_cert_chain.pem;
+    ssl_certificate_key /etc/nginx/conf.d/cert/harbor/harbor.tyduyong.com_key.key;
+
+    location / {
+	proxy_pass http://172.22.187.175:10010;  # 将请求转发到后端服务器
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+	      client_max_body_size 1024m; #给大点，否则推送镜像时会提示数据太大。
+    }
+
+}
 ```
 
