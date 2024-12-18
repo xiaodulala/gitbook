@@ -84,6 +84,13 @@ ssh-copy-id k8s-worker02
 lsmod | grep br_netfilter
 # 如果没有开启，执行下面的
 sudo modprobe br_netfilter
+sudo modprobe overlay
+
+sudo cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+ 
 # 编写k8s.conf
 sudo cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-iptables  = 1
@@ -193,6 +200,45 @@ ls /var/run/cri-dockerd.sock
 ```
 
 
+## 2.3 使用containerd作为容器管理工具
+
+### 2.3.1 下载和安装
+
+[下载地址](https://github.com/containerd/containerd/releases)
+
+```bash
+# 解压
+sudo tar xf cri-containerd-1.7.24-linux-amd64.tar.gz -C /
+# 验证
+which runc
+which containerd
+```
+### 2.3.2 配置文件生成和修改
+
+```bash
+# 创建配置文件目录
+mkdir /etc/containerd
+# 生成配置文件
+containerd config default > /etc/containerd/config.toml
+
+# 修改第67行  3.8修改为3.9
+sanbox_image = "registry.k8s.io/pause:3.10"
+
+# 如果使用阿里云镜像仓库 由3.8修改为3.9
+sanbox_image = "registry.aliyuncs.com/google_containers/pause:3.10"
+
+# 修改第139行 false修改为true
+SystemdCgroup = true
+
+```
+### 2.3.3 配置开启自启动
+
+```bash
+sudo systemctl enable --now containerd
+# 验证
+ls /var/run/containerd
+
+```
 
 # 3. Kubernetes 1.29集群部署
 
@@ -200,7 +246,7 @@ ls /var/run/cri-dockerd.sock
 
 ||kubeadm|kubelet|kubectl
 |----|----|----|----|----|
-|版本|1.29|1.29|1.29|
+|版本|1.31|1.31|1.31|
 |安装集群|所有主机|集群所有主机|集群所有主机|
 |作用|初始化集群，管理集群|用于接收api-server命令，对pod声明周期进行管理|集群应用命令行管理工具|
 
@@ -218,12 +264,12 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
 2. 下载用于 Kubernetes 软件包仓库的公共签名密钥。所有仓库都使用相同的签名密钥，因此你可以忽略URL中的版本：
 sudo mkdir -p -m 755 /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-3. 添加 Kubernetes apt 仓库。 请注意，此仓库仅包含适用于 Kubernetes 1.29 的软件包； 对于其他 Kubernetes 次要版本，则需要更改 URL 中的 Kubernetes 次要版本以匹配你所需的次要版本 （你还应该检查正在阅读的安装文档是否为你计划安装的 Kubernetes 版本的文档）。
+3. 添加 Kubernetes apt 仓库。 请注意，此仓库仅包含适用于 Kubernetes 1.31 的软件包； 对于其他 Kubernetes 次要版本，则需要更改 URL 中的 Kubernetes 次要版本以匹配你所需的次要版本 （你还应该检查正在阅读的安装文档是否为你计划安装的 Kubernetes 版本的文档）。
 
 # 此操作会覆盖 /etc/apt/sources.list.d/kubernetes.list 中现存的所有配置。
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 4. 更新 apt 包索引，安装 kubelet、kubeadm 和 kubectl，并锁定其版本：
 
@@ -238,12 +284,22 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 ```bash
 
-sudo vim /etc/sysconfig/kubelet
+sudo vim /etc/sysconfig/kubelet  # 1.31 在 /etc/default/kubelet 
 
 KUBELET_EXTRA_ARGS="--cgroup-driver=systemd"
 
 sudo systemctl enable kubelet
 
+```
+
+## 3.4 配置kubeadm
+
+```bash
+kubeadm config print init-defaults > kubeadm-config.yaml 
+# 修改主节点ip地址
+# 修改节点name
+# networking 增加podSubnet 10.244.0.0/16
+# 修改k8s版本  kubeadm version 查看版本，有时候小版本不一致
 ```
 
 ## 3.4 镜像准备
@@ -254,18 +310,40 @@ kubeadm version
 # 查看镜像
 kubeadm config images list
 
-registry.k8s.io/kube-apiserver:v1.29.2
-registry.k8s.io/kube-controller-manager:v1.29.2
-registry.k8s.io/kube-scheduler:v1.29.2
-registry.k8s.io/kube-proxy:v1.29.2
-registry.k8s.io/coredns/coredns:v1.11.1
-registry.k8s.io/pause:3.9
-registry.k8s.io/etcd:3.5.10-0
+registry.k8s.io/kube-apiserver:v1.31.3
+registry.k8s.io/kube-controller-manager:v1.31.3
+registry.k8s.io/kube-scheduler:v1.31.3
+registry.k8s.io/kube-proxy:v1.31.3
+registry.k8s.io/coredns/coredns:v1.11.3
+registry.k8s.io/pause:3.10
+registry.k8s.io/etcd:3.5.15-0
+
+# 国内镜像源
+kubeadm  config images list --kubernetes-version=v1.31.3 --image-repository=registry.aliyuncs.com/google_containers
+registry.aliyuncs.com/google_containers/kube-apiserver:v1.31.3
+registry.aliyuncs.com/google_containers/kube-controller-manager:v1.31.3
+registry.aliyuncs.com/google_containers/kube-scheduler:v1.31.3
+registry.aliyuncs.com/google_containers/kube-proxy:v1.31.3
+registry.aliyuncs.com/google_containers/coredns:v1.11.3
+registry.aliyuncs.com/google_containers/pause:3.10
+registry.aliyuncs.com/google_containers/etcd:3.5.15-0
 
 # 下载镜像 
 # kubeadm config images pull
-kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock
+kubeadm config images pull 
+# 国内镜像源拉取
+kubeadm  config images pull --kubernetes-version=v1.31.3 --image-repository=registry.aliyuncs.com/google_containers 
+# 查看镜像
+sudo ctr -n k8s.io images ls
+sudo crictl images
 
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/kube-apiserver:v1.31.3 registry.k8s.io/kube-apiserver:v1.31.3 
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/kube-controller-manager:v1.31.3 registry.k8s.io/kube-controller-manager:v1.31.3
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/kube-scheduler:v1.31.3 registry.k8s.io/kube-scheduler:v1.31.3
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/kube-proxy:v1.31.3 registry.k8s.io/kube-proxy:v1.31.3
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/coredns:v1.11.3 registry.k8s.io/coredns/coredns:v1.11.3
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/pause:3.10 registry.k8s.io/pause:3.10
+sudo ctr --namespace k8s.io image tag registry.aliyuncs.com/google_containers/etcd:3.5.15-0 registry.k8s.io/etcd:3.5.15-0
 
 ```
 
@@ -273,38 +351,34 @@ kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock
 #镜像打包脚本
 #!/bin/bash
 image_list='
-registry.k8s.io/kube-apiserver:v1.29.2
-registry.k8s.io/kube-controller-manager:v1.29.2
-registry.k8s.io/kube-scheduler:v1.29.2
-registry.k8s.io/kube-proxy:v1.29.2
-registry.k8s.io/coredns/coredns:v1.11.1
-registry.k8s.io/pause:3.9
-registry.k8s.io/etcd:3.5.10-0
+registry.k8s.io/kube-apiserver:v1.31.3
+registry.k8s.io/kube-controller-manager:v1.31.3
+registry.k8s.io/kube-scheduler:v1.31.3
+registry.k8s.io/kube-proxy:v1.31.3
+registry.k8s.io/coredns/coredns:v1.11.3
+registry.k8s.io/pause:3.10
+registry.k8s.io/etcd:3.5.15-0
 '
-
-for i in $image_list
-
-do
-	docker pull $i
-done
-
-docker save -o k8s-1-29-2.tar $image_list
-
+sudo ctr -n k8s.io images export k8s-1-31-3.tar $image_list
+sudo ctr -n k8s.io  images import k8s-1-31-3.tar
 ```
 
 ## 3.5 集群初始化
 
 ```bash
 # 初始化集群
-sudo kubeadm  init --kubernetes-version=v1.29.2  --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.56.3 --cri-socket unix:///var/run/cri-dockerd.sock
+#sudo kubeadm  init --kubernetes-version=v1.29.2  --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.56.3 --cri-socket unix:///var/run/cri-dockerd.sock
+# 使用配置文件的方式
+sudo kubeadm init --config kubeadm-config.yaml --upload-certs --v=9
+
+
 # 设置配置
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # 添加工作节点
-sudo kubeadm join 192.168.56.3:6443 --token wo8xsg.i1b5pc65t1babl2f \
-        --discovery-token-ca-cert-hash sha256:4366def480864026db4ef451e08370416cc69a115bfa57762e997a6bc60b59dd  --cri-socket unix:///var/run/cri-dockerd.sock
+sudo kubeadm join 192.168.56.3:6443 --token abcdef.0123456789abcdef --discovery-token-ca-cert-hash sha256:22f521fdff7fa71149553e812dda9429fece43d587f146242e1f56455b941b7a
 
 ```
 
@@ -313,21 +387,49 @@ sudo kubeadm join 192.168.56.3:6443 --token wo8xsg.i1b5pc65t1babl2f \
 [官方文档](https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart)
 
 ```bash
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/tigera-operator.yaml
 
 # 验证
 kubectl get pods -n tigera-operator
 ```
 
+
+```bash
+
+# 直接从github下载镜像  https://github.com/projectcalico/calico/releases/tag/v3.29.1
+# release-v3.29.1.tgz 解压后将镜像导入。特别注意，导入时使用的命名空间是k8s.io
+
+
+# 还需要下载的镜像
+docker.io/calico/node-driver-registrar:v3.29.1
+docker.io/calico/csi:v3.29.1
+
+
+# 使用 m.daocloud.io 镜像加速
+sudo ctr -n k8s.io  image pull m.daocloud.io/docker.io/calico/node-driver-registrar:v3.29.1
+sudo ctr -n k8s.io  image tag m.daocloud.io/docker.io/calico/node-driver-registrar:v3.29.1 docker.io/calico/node-driver-registrar:v3.29.1
+
+
+sudo ctr -n k8s.io  image pull m.daocloud.io/docker.io/calico/csi:v3.29.1
+sudo ctr -n k8s.io  image tag m.daocloud.io/docker.io/calico/csi:v3.29.1 docker.io/calico/csi:v3.29.1
+
+
+```
+
 ```bash
 # 下载配置文件
-wget  https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/custom-resources.yaml
+wget  https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/custom-resources.yaml
 
 sudo vim  custom-resources.yaml
 修改为 cidr: 10.244.0.0/16
 
+
+
+
 kubectl apply -f custom-resources.yaml
 ```
+
+
 
 # Kubernetes 集群可用性验证
 
